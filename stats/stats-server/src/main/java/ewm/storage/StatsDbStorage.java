@@ -43,7 +43,7 @@ public class StatsDbStorage implements StatsStorage {
             FROM
                 hits AS h
             WHERE
-                h.created_at BETWEEN :start AND :end
+                h.timestamp BETWEEN :start AND :end
                 [urisCondition]
             GROUP BY
                 h.app, h.uri
