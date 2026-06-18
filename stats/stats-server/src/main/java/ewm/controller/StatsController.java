@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public List<StatsDto> getStats(
+    public ResponseEntity<List<StatsDto>> getStats(
             @RequestParam
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             LocalDateTime start,
@@ -37,6 +38,8 @@ public class StatsController {
 
             @RequestParam(required = false) List<String> uris
     ) {
-        return statsService.getStats(start, end, uris, unique);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(statsService.getStats(start, end, uris, unique));
     }
 }
