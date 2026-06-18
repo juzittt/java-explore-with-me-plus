@@ -1,4 +1,4 @@
-package ewm;
+package ewm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
@@ -15,11 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HitDto {
+public class EndpointHitDto {
     private static final String APP_BLANK_ERROR = "название сервиса не может быть пустым";
     private static final String URI_BLANK_ERROR = "uri сервиса не может быть пустым";
     private static final String IP_BLANK_ERROR = "ip пользователя не может быть пустым";
     private static final String TIMESTAMP_BLANK_ERROR = "дата не может быть пустой";
+    private Long id;
 
     @NotBlank(message = APP_BLANK_ERROR)
     private String app;

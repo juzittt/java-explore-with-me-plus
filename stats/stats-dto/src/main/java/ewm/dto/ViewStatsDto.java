@@ -1,4 +1,4 @@
-package ewm;
+package ewm.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatsDto {
+public class ViewStatsDto {
+
     private String app;
-
     private String uri;
-
-    private long hits;
+    private Long hits;
 }

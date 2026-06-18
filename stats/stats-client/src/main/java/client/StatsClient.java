@@ -1,13 +1,12 @@
 package client;
 
-import ewm.HitDto;
+import ewm.dto.EndpointHitDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.swing.*;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +24,7 @@ public class StatsClient {
                 .build();
     }
 
-
-    public ResponseEntity<Object> saveHit(HitDto hitDto) {
+    public ResponseEntity<Object> saveHit(EndpointHitDto hitDto) {
         return restClient.post()
                 .uri("/hit")
                 .body(hitDto)
@@ -46,7 +44,7 @@ public class StatsClient {
                 .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {
-            builder.queryParam("uris", uris.toArray());
+            uris.forEach(uri -> builder.queryParam("uris", uri));
         }
 
         URI uri = builder.build().encode().toUri();
@@ -56,6 +54,4 @@ public class StatsClient {
                 .retrieve()
                 .toEntity(Object.class);
     }
-
-
 }
