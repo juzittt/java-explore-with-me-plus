@@ -1,0 +1,18 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+
+CREATE TABLE IF NOT EXISTS users (
+    id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name  VARCHAR(250) NOT NULL,
+    email VARCHAR(250) NOT NULL,
+    CONSTRAINT uq_email UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS categories (
+    id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    CONSTRAINT uq_category_name UNIQUE (name)
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
+CREATE INDEX IF NOT EXISTS idx_categories_name ON categories (name);
