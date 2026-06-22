@@ -4,9 +4,10 @@ import ewm.categories.dto.CategoryDto;
 import ewm.categories.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -16,11 +17,11 @@ public class PublicCategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/categories")
-    public ResponseEntity<Page<CategoryDto>> getCategories(
+    public ResponseEntity<List<CategoryDto>> getCategories(
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
         log.info("GET /categories: from={}, size={}", from, size);
-        Page<CategoryDto> categories = categoryService.getCategories(from, size);
+        List<CategoryDto> categories = categoryService.getCategories(from, size);
         return ResponseEntity.ok(categories);
     }
 

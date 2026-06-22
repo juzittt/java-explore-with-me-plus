@@ -2,7 +2,8 @@ package ewm.categories.service;
 
 import ewm.categories.dto.CategoryDto;
 import ewm.categories.dto.NewCategoryDto;
-import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface CategoryService {
 
@@ -12,7 +13,7 @@ public interface CategoryService {
 
     void deleteCategory(Long catId);
 
-    Page<CategoryDto> getCategories(Integer from, Integer size);
+    List<CategoryDto> getCategories(Integer from, Integer size);
 
     CategoryDto getCategory(Long catId);
 }

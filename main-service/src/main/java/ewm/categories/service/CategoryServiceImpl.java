@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -55,10 +57,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CategoryDto> getCategories(Integer from, Integer size) {
+    public List<CategoryDto> getCategories(Integer from, Integer size) {
         PageRequest pageRequest = PageRequest.of(from / size, size);
-        Page<Category> categoriesPage = categoryRepository.findAll(pageRequest);
-        return categoriesPage.map(categoryMapper::toCategoryDto);
+        return categoryRepository.findAll(pageRequest)
+                .stream()
+                .map(categoryMapper::toCategoryDto)
+                .toList();
     }
 
     @Override
