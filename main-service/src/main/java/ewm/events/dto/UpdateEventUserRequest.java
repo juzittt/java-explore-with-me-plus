@@ -19,13 +19,6 @@ public class UpdateEventUserRequest {
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
-
-    /*
-     * Из свагера:
-     * * Изменение состояния события
-     * * Enum:
-     * * [ SEND_TO_REVIEW, CANCEL_REVIEW ]
-     */
-    private String stateAction;
+    private StateAction stateAction;
     private String title;
 }

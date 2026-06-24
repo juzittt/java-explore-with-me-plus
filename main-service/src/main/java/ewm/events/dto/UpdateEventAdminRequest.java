@@ -19,14 +19,6 @@ public class UpdateEventAdminRequest {
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
-
-    /*
-    * Из свагера:
-    * * Новое состояние события
-    * * Enum:
-    * * [ PUBLISH_EVENT, REJECT_EVENT ]
-     */
-    private String stateAction;
-
+    private StateAction stateAction;
     private String title;
 }
