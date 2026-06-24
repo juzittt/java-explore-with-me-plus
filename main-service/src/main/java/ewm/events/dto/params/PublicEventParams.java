@@ -1,5 +1,6 @@
 package ewm.events.dto.params;
 
+import ewm.events.dto.EventSort;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +14,22 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PublicEventParams {
+
     private String text;
+
     private List<Long> categories;
+
     private Boolean paid;
+
     private LocalDateTime rangeStart;
+
     private LocalDateTime rangeEnd;
+
     private Boolean onlyAvailable;
-    private String sort;
+
+    private EventSort sort;
+
     private Integer from;
+
     private Integer size;
 }
