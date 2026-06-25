@@ -21,6 +21,7 @@ public interface EventMapper {
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "state", ignore = true)
     @Mapping(target = "eventDate", ignore = true)
+    @Mapping(target = "category", ignore = true)
     Event toEvent(NewEventDto dto, Category category, User initiator);
 
     @Mapping(target = "views", ignore = true)
