@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 public class EventRequestStatusUpdateRequest {
-    List<Long> eventIds;
+    List<Long> requestIds;
     Status status;
 }

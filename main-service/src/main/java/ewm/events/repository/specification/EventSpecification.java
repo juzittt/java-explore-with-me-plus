@@ -2,6 +2,10 @@ package ewm.events.repository.specification;
 
 import ewm.events.model.Event;
 import ewm.events.model.State;
+import ewm.participationRequests.model.ParticipationRequests;
+import ewm.participationRequests.model.Status;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -70,17 +74,20 @@ public class EventSpecification {
     }
 
     public static Specification<Event> onlyAvailable(Boolean onlyAvailable) {
-
         return (root, query, cb) -> {
-
             if (onlyAvailable == null || !onlyAvailable) {
                 return cb.conjunction();
             }
 
-            return cb.lessThan(
-                    root.get("confirmedRequests"),
-                    root.get("participantLimit")
-            );
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<ParticipationRequests> requestRoot = subquery.from(ParticipationRequests.class);
+            subquery.select(cb.count(requestRoot))
+                    .where(
+                            cb.equal(requestRoot.get("event"), root),
+                            cb.equal(requestRoot.get("status"), Status.CONFIRMED)
+                    );
+
+            return cb.lessThan(subquery, root.get("participantLimit"));
         };
     }
 
@@ -109,15 +116,11 @@ public class EventSpecification {
     }
 
     public static Specification<Event> hasUser(List<Long> users) {
-
         return (root, query, cb) -> {
-
             if (users == null || users.isEmpty()) {
                 return cb.conjunction();
             }
-
-            return cb.equal(root.get("initiator")
-                    .get("id"), users);
+            return root.get("initiator").get("id").in(users);
         };
     }
 

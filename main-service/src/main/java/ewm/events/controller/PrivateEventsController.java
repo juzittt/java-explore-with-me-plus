@@ -8,10 +8,13 @@ import ewm.events.dto.params.PaginationParams;
 import ewm.events.dto.params.UserEventPathParams;
 import ewm.events.service.EventsService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.List;
 @RequestMapping("/users/{userId}/events")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class PrivateEventsController {
 
     private final EventsService eventsService;
@@ -34,9 +38,10 @@ public class PrivateEventsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventShortDto>> getUserEvents(@PathVariable Long userId,
-                                                             @RequestParam(defaultValue = "0") Integer from,
-                                                             @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<List<EventShortDto>> getUserEvents(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = "10") @Positive Integer size) {
 
         log.info("GET /users/{}/events: from={}, size={}", userId, from, size);
 

@@ -66,7 +66,7 @@ public class EventsServiceImpl implements EventsService {
         LocalDateTime startDate = params.getRangeStart();
         LocalDateTime endDate = params.getRangeEnd();
 
-        if (startDate == null && params.getRangeEnd() == null) {
+        if (startDate == null && endDate == null) {
             startDate = LocalDateTime.now();
         }
 
@@ -97,7 +97,8 @@ public class EventsServiceImpl implements EventsService {
 
         PageRequest pageRequest = PageRequest.of(
                 params.getFrom() / params.getSize(),
-                params.getSize()
+                params.getSize(),
+                Sort.by(Sort.Direction.DESC, "eventDate")
         );
 
         List<State> states = params.getStates() == null
@@ -187,7 +188,10 @@ public class EventsServiceImpl implements EventsService {
     public List<EventShortDto> getUserEvents(Long userId, PaginationParams params) {
         getUserOrThrow(userId);
 
-        PageRequest pageRequest = PageRequest.of(params.getFrom() / params.getSize(), params.getSize());
+        PageRequest pageRequest = PageRequest.of(
+                params.getFrom() / params.getSize(),
+                params.getSize(),
+                Sort.by(Sort.Direction.DESC, "eventDate"));
         Page<Event> page = eventsRepository.findByInitiatorId(userId, pageRequest);
         List<Event> events = page.getContent();
 
@@ -320,6 +324,10 @@ public class EventsServiceImpl implements EventsService {
     }
 
     private Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
+        if (eventIds == null || eventIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         return participationRequestsRepository.getConfirmedRequests(eventIds)
                         .stream()
                         .collect(Collectors.toMap(

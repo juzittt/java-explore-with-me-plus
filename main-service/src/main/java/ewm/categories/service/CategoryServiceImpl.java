@@ -8,6 +8,7 @@ import ewm.categories.repository.CategoryRepository;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
 
-        if (categoryRepository.existsByName(categoryDto.getName())) {
+        if (categoryRepository.existsByNameAndIdNot(categoryDto.getName(), catId)) {
             throw new ConflictException("Категория с таким названием уже существует");
         }
 
@@ -48,10 +49,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long catId) {
-        if (!categoryRepository.existsById(catId)) {
+        if (!categoryRepository.existsByCategoryId(catId)) {
             throw new NotFoundException("Категория с id=" + catId + " не найдена");
         }
-        categoryRepository.deleteById(catId);
+
+        try {
+            categoryRepository.deleteById(catId);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Категория используется в событиях и не может быть удалена");
+        }
     }
 
     @Override

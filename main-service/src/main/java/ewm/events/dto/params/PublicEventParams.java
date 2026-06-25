@@ -28,7 +28,8 @@ public class PublicEventParams {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rangeEnd;
 
-    private Boolean onlyAvailable;
+    @Builder.Default
+    private Boolean onlyAvailable = false;
 
     private EventSort sort;
 

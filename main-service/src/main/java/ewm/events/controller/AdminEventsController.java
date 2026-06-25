@@ -4,9 +4,12 @@ import ewm.events.dto.EventFullDto;
 import ewm.events.dto.UpdateEventAdminRequest;
 import ewm.events.dto.params.AdminEventParams;
 import ewm.events.service.EventsService;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -16,9 +19,10 @@ import java.util.List;
 @RequestMapping("/admin/events")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class AdminEventsController {
 
-    public final EventsService eventsService;
+    private final EventsService eventsService;
 
     @GetMapping
     public ResponseEntity<List<EventFullDto>> getEvents(
@@ -27,8 +31,8 @@ public class AdminEventsController {
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) LocalDateTime rangeStart,
             @RequestParam(required = false) LocalDateTime rangeEnd,
-            @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size
+            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
         log.info("GET /admin/events: users={}, states={}, categories={}", users, states, categories);
 

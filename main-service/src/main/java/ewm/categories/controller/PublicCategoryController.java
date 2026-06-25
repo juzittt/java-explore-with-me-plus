@@ -2,6 +2,8 @@ package ewm.categories.controller;
 
 import ewm.categories.dto.CategoryDto;
 import ewm.categories.service.CategoryService;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,8 @@ public class PublicCategoryController {
 
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryDto>> getCategories(
-            @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = "10") @Positive Integer size) {
         log.info("GET /categories: from={}, size={}", from, size);
         List<CategoryDto> categories = categoryService.getCategories(from, size);
         return ResponseEntity.ok(categories);

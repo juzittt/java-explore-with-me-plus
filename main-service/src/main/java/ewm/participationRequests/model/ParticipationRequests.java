@@ -1,16 +1,18 @@
 package ewm.participationRequests.model;
 
 import ewm.events.model.Event;
-import ewm.events.model.State;
 import ewm.users.model.User;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "participation_requests")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ParticipationRequests {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
