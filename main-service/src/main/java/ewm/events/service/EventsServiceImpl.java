@@ -20,6 +20,8 @@ import ewm.events.repository.specification.EventSpecification;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.exception.ValidationException;
+import ewm.participationRequests.dto.EventRequestsCountDto;
+import ewm.participationRequests.repository.ParticipationRequestsRepository;
 import ewm.users.model.User;
 import ewm.users.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,6 +52,7 @@ public class EventsServiceImpl implements EventsService {
     private final ObjectMapper objectMapper;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final ParticipationRequestsRepository participationRequestsRepository;
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -328,8 +331,12 @@ public class EventsServiceImpl implements EventsService {
     }
 
     private Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
-        //нужно дописать после реализации запросов на участие
-        return Collections.emptyMap();
+        return participationRequestsRepository.getConfirmedRequests(eventIds)
+                        .stream()
+                        .collect(Collectors.toMap(
+                                EventRequestsCountDto::eventId,
+                                EventRequestsCountDto::confirmedRequests
+                        ));
     }
 
     private void enrichEventWithStats(EventFullDto dto) {
