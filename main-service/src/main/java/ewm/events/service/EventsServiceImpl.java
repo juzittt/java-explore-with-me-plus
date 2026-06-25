@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,20 +59,6 @@ public class EventsServiceImpl implements EventsService {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
     private static final String APP_NAME = "ewm-main-service";
 
-    private Sort buildSort(PublicEventParams params) {
-
-        if (params.getSort() == null) {
-            return Sort.unsorted();
-        }
-
-        return switch (params.getSort()) {
-
-            case EVENT_DATE -> Sort.by(Sort.Direction.ASC, "eventDate");
-
-            case VIEWS -> Sort.unsorted(); //Временная заглушка
-        };
-    }
-
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getEvents(PublicEventParams params, HttpServletRequest request) {
@@ -85,14 +72,6 @@ public class EventsServiceImpl implements EventsService {
 
         sendHitToStats("/events", request.getRemoteAddr());
 
-        Sort sort = buildSort(params);
-
-        PageRequest pageRequest = PageRequest.of(
-                params.getFrom() / params.getSize(),
-                params.getSize(),
-                sort
-        );
-
         Specification<Event> spec = Specification
                 .where(EventSpecification.published())
                 .and(EventSpecification.hasText(params.getText()))
@@ -102,17 +81,11 @@ public class EventsServiceImpl implements EventsService {
                 .and(EventSpecification.dateAfter(startDate))
                 .and(EventSpecification.dateBefore(endDate));
 
-        Page<Event> page = eventsRepository.findAll(spec, pageRequest);
-        List<Event> events = page.getContent();
-
-        if (events.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<EventShortDto> dtos = eventMapper.toEventShortDtoList(events);
-        enrichEventsWithStats(dtos);
-
-        return dtos;
+        return switch (params.getSort()) {
+            case VIEWS -> getEventsSortedByViews(spec, params);
+            case EVENT_DATE -> getEventsSortedByDate(spec, params);
+            case null -> getEventsSortedByDate(spec, params);
+        };
     }
 
     @Override
@@ -164,9 +137,6 @@ public class EventsServiceImpl implements EventsService {
             throw new NotFoundException("Event с id=" + id + " не найден");
         }
 
-        /*
-         * Не уверен, нужно тестить
-         */
         sendHitToStats("/events/" + id, request.getRemoteAddr());
 
         EventFullDto dto = eventMapper.toEventFullDto(event);
@@ -233,7 +203,18 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     public EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest request) {
-        return null;
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event с id=" + eventId + " не найден"));
+
+        updateAdminEventFields(event, request);
+        handleAdminStateAction(event, request.getStateAction());
+
+        event = eventsRepository.save(event);
+
+        EventFullDto result = eventMapper.toEventFullDto(event);
+        enrichEventWithStats(result);
+
+        return result;
     }
 
     @Override
@@ -312,11 +293,18 @@ public class EventsServiceImpl implements EventsService {
                 true
         );
 
+        if (response.getBody() == null) {
+            return Collections.emptyMap();
+        }
+
         List<ViewStatsDto> stats = objectMapper.convertValue(
                 response.getBody(),
-                new TypeReference<List<ViewStatsDto>>() {
-                }
+                new TypeReference<List<ViewStatsDto>>() {}
         );
+
+        if (stats == null || stats.isEmpty()) {
+            return Collections.emptyMap();
+        }
 
         return stats.stream()
                 .collect(Collectors.toMap(
@@ -325,7 +313,8 @@ public class EventsServiceImpl implements EventsService {
                                         stat.getUri().lastIndexOf('/') + 1
                                 )
                         ),
-                        ViewStatsDto::getHits
+                        ViewStatsDto::getHits,
+                        (existing, replacement) -> existing
                 ));
 
     }
@@ -384,7 +373,12 @@ public class EventsServiceImpl implements EventsService {
     }
 
     private LocalDateTime parseAndValidateEventDate(String dateStr, String errorMessage) {
-        LocalDateTime eventDate = LocalDateTime.parse(dateStr, FORMATTER);
+        LocalDateTime eventDate;
+        try {
+            eventDate = LocalDateTime.parse(dateStr, FORMATTER);
+        } catch (Exception e) {
+            throw new ValidationException("Неверный формат даты. Ожидается формат: " + DATE_FORMAT);
+        }
 
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException(errorMessage);
@@ -401,5 +395,103 @@ public class EventsServiceImpl implements EventsService {
     private Category getCategoryOrThrow(Long categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Category с id=" + categoryId + " не найдена"));
+    }
+
+    private void updateAdminEventFields(Event event, UpdateEventAdminRequest request) {
+        if (request.getEventDate() != null) {
+            LocalDateTime eventDate;
+            try {
+                eventDate = LocalDateTime.parse(request.getEventDate(), FORMATTER);
+            } catch (Exception e) {
+                throw new ValidationException("Неверный формат даты. Ожидается формат: " + DATE_FORMAT);
+            }
+
+            if (event.getState() == State.PUBLISHED && eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
+                throw new ConflictException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
+            }
+            event.setEventDate(eventDate);
+        }
+
+        if (request.getAnnotation() != null) event.setAnnotation(request.getAnnotation());
+        if (request.getDescription() != null) event.setDescription(request.getDescription());
+        if (request.getTitle() != null) event.setTitle(request.getTitle());
+        if (request.getPaid() != null) event.setPaid(request.getPaid());
+        if (request.getParticipantLimit() != null) event.setParticipantLimit(request.getParticipantLimit());
+        if (request.getRequestModeration() != null) event.setRequestModeration(request.getRequestModeration());
+
+        if (request.getCategory() != null) {
+            event.setCategory(getCategoryOrThrow(request.getCategory()));
+        }
+
+        if (request.getLocation() != null) {
+            event.getLocation().setLat(request.getLocation().getLat());
+            event.getLocation().setLon(request.getLocation().getLon());
+        }
+    }
+
+    private void handleAdminStateAction(Event event, StateAction stateAction) {
+        if (stateAction == null) {
+            return;
+        }
+
+        switch (stateAction) {
+            case StateAction.PUBLISH_EVENT -> {
+                if (event.getState() != State.PENDING) {
+                    throw new ConflictException("Событие должно находиться в состоянии ожидания публикации");
+                }
+                event.setState(State.PUBLISHED);
+                event.setPublishedOn(LocalDateTime.now());
+            }
+            case StateAction.REJECT_EVENT -> {
+                if (event.getState() == State.PUBLISHED) {
+                    throw new ConflictException("Нельзя отклонить опубликованное событие");
+                }
+                event.setState(State.CANCELED);
+            }
+            default -> throw new ValidationException("Неизвестное состояние: " + stateAction);
+        }
+    }
+
+    private List<EventShortDto> getEventsSortedByDate(Specification<Event> spec, PublicEventParams params) {
+        PageRequest pageRequest = PageRequest.of(
+                params.getFrom() / params.getSize(),
+                params.getSize(),
+                Sort.by(Sort.Direction.ASC, "eventDate")
+        );
+
+        Page<Event> page = eventsRepository.findAll(spec, pageRequest);
+        List<Event> events = page.getContent();
+
+        if (events.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<EventShortDto> dtos = eventMapper.toEventShortDtoList(events);
+        enrichEventsWithStats(dtos);
+
+        return dtos;
+    }
+
+    private List<EventShortDto> getEventsSortedByViews(Specification<Event> spec, PublicEventParams params) {
+        List<Event> allEvents = eventsRepository.findAll(spec);
+
+        if (allEvents.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<EventShortDto> dtos = eventMapper.toEventShortDtoList(allEvents);
+        enrichEventsWithStats(dtos);
+
+        dtos.sort(Comparator.comparing(EventShortDto::getViews).reversed());
+
+        int from = params.getFrom();
+        int size = params.getSize();
+
+        if (from >= dtos.size()) {
+            return Collections.emptyList();
+        }
+
+        int toIndex = Math.min(from + size, dtos.size());
+        return dtos.subList(from, toIndex);
     }
 }

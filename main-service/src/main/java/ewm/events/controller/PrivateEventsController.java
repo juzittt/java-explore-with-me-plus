@@ -25,10 +25,8 @@ public class PrivateEventsController {
     private final EventsService eventsService;
 
     @PostMapping
-    public ResponseEntity<EventFullDto> createEvent(
-            @PathVariable Long userId,
-            @Valid @RequestBody NewEventDto dto
-    ) {
+    public ResponseEntity<EventFullDto> createEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto dto) {
+
         log.info("POST /users/{}/events: creating event", userId);
 
         EventFullDto event = eventsService.createEvent(userId, dto);
@@ -36,11 +34,10 @@ public class PrivateEventsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventShortDto>> getUserEvents(
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size
-    ) {
+    public ResponseEntity<List<EventShortDto>> getUserEvents(@PathVariable Long userId,
+                                                             @RequestParam(defaultValue = "0") Integer from,
+                                                             @RequestParam(defaultValue = "10") Integer size) {
+
         log.info("GET /users/{}/events: from={}, size={}", userId, from, size);
 
         PaginationParams pagination = PaginationParams.builder()
@@ -53,10 +50,8 @@ public class PrivateEventsController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<EventFullDto> getUserEvent(
-            @PathVariable Long userId,
-            @PathVariable Long eventId
-    ) {
+    public ResponseEntity<EventFullDto> getUserEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+
         log.info("GET /users/{}/events/{}", userId, eventId);
 
         UserEventPathParams pathParams = UserEventPathParams.builder()
@@ -69,11 +64,10 @@ public class PrivateEventsController {
     }
 
     @PatchMapping("/{eventId}")
-    public ResponseEntity<EventFullDto> updateEvent(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @RequestBody UpdateEventUserRequest dto
-    ) {
+    public ResponseEntity<EventFullDto> updateEvent(@PathVariable Long userId,
+                                                    @PathVariable Long eventId,
+                                                    @RequestBody UpdateEventUserRequest dto) {
+
         log.info("PATCH /users/{}/events/{}", userId, eventId);
 
         UserEventPathParams pathParams = UserEventPathParams.builder()
