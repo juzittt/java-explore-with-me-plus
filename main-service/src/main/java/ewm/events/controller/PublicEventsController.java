@@ -29,22 +29,22 @@ public class PublicEventsController {
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) Boolean paid,
-            @RequestParam(required = false) String rangeStart,
-            @RequestParam(required = false) String rangeEnd,
+            @RequestParam(required = false) LocalDateTime rangeStart,
+            @RequestParam(required = false) LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false) EventSort sort,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size,
             HttpServletRequest request
     ) {
-        log.info("GET /events");
+        log.info("GET /events: text={}, categories={}, paid={}", text, categories, paid);
 
         PublicEventParams searchParams = PublicEventParams.builder()
                 .text(text)
                 .categories(categories)
                 .paid(paid)
-                .rangeStart(rangeStart == null ? null : LocalDateTime.parse(rangeStart))
-                .rangeEnd(rangeEnd == null ? null : LocalDateTime.parse(rangeEnd))
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
                 .onlyAvailable(onlyAvailable)
                 .sort(sort)
                 .from(from)

@@ -2,7 +2,9 @@ package ewm.events.service;
 
 import ewm.events.dto.*;
 import ewm.events.dto.params.AdminEventParams;
+import ewm.events.dto.params.PaginationParams;
 import ewm.events.dto.params.PublicEventParams;
+import ewm.events.dto.params.UserEventPathParams;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -15,11 +17,11 @@ public interface EventsService {
 
     EventFullDto createEvent(Long userId, NewEventDto dto);
 
-    List<EventShortDto> getUserEvents(Long userId, Integer from, Integer size);
+    List<EventShortDto> getUserEvents(Long userId, PaginationParams params);
 
-    EventFullDto getUserEvent(Long userId, Long eventId);
+    EventFullDto getUserEvent(UserEventPathParams params);
 
-    EventFullDto updateUserEvent(Long userId, Long eventId, UpdateEventUserRequest dto);
+    EventFullDto updateUserEvent(UserEventPathParams params, UpdateEventUserRequest dto);
 
     List<EventFullDto> getAdminEvents(AdminEventParams params);
 
