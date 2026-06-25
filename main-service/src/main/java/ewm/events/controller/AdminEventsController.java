@@ -3,9 +3,11 @@ package ewm.events.controller;
 import ewm.events.dto.EventFullDto;
 import ewm.events.dto.params.AdminEventParams;
 import ewm.events.service.EventsService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +21,7 @@ public class AdminEventsController {
     public final EventsService eventsService;
 
     @GetMapping
-    public ResponseEntity<List<EventFullDto>> getEvents(AdminEventParams params) {
+    public ResponseEntity<List<EventFullDto>> getEvents(@ModelAttribute @Valid AdminEventParams params) {
         return ResponseEntity.ok(eventsService.getAdminEvents(params));
     }
 

@@ -1,7 +1,10 @@
 package ewm.events.service;
 
-import ewm.events.dto.EventFullDto;
-import ewm.events.dto.EventShortDto;
+import client.StatsClient;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ewm.dto.ViewStatsDto;
+import ewm.events.dto.*;
 import ewm.events.dto.params.AdminEventParams;
 import ewm.events.dto.params.PublicEventParams;
 import ewm.events.mapper.EventMapper;
@@ -16,11 +19,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +36,8 @@ public class EventsServiceImpl implements EventsService {
 
     private final EventsRepository eventsRepository;
     private final EventMapper eventMapper;
+    private final StatsClient statsClient;
+    private final ObjectMapper objectMapper;
 
     private Sort buildSort(PublicEventParams params) {
 
@@ -104,7 +113,31 @@ public class EventsServiceImpl implements EventsService {
 
         Page<Event> page = eventsRepository.findAll(spec, pageRequest);
 
-        return eventMapper.toEventFullDtoList(page.getContent());
+        List<Event> events = page.getContent();
+
+        if (events.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Long> eventIds = events.stream()
+                .map(Event::getId)
+                .toList();
+
+        List<EventFullDto> eventFullDtoList = eventMapper.toEventFullDtoList(page.getContent());
+
+        Map<Long, Long> viewsMap = getViewsMap(eventIds);
+        Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsMap(eventIds);
+
+        eventFullDtoList.forEach(dto -> {
+            dto.setConfirmedRequests(
+                    confirmedRequestsMap.getOrDefault(dto.getId(), 0L)
+            );
+            dto.setViews(
+                    viewsMap.getOrDefault(dto.getId(), 0L)
+            );
+        });
+
+        return eventFullDtoList;
     }
 
     @Override
@@ -124,5 +157,70 @@ public class EventsServiceImpl implements EventsService {
         dto.setConfirmedRequests(0L);
 
         return dto;
+    }
+
+    @Override
+    public EventFullDto createEvent(Long userId, NewEventDto dto) {
+        return null;
+    }
+
+    @Override
+    public EventFullDto getUserEvent(Long userId, Long eventId) {
+        return null;
+    }
+
+    @Override
+    public List<EventShortDto> getUserEvents(Long userId, Integer from, Integer size) {
+        return List.of();
+    }
+
+    @Override
+    public EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest request) {
+        return null;
+    }
+
+    @Override
+    public EventFullDto updateUserEvent(Long userId, Long eventId, UpdateEventUserRequest dto) {
+        return null;
+    }
+
+    private Map<Long, Long> getViewsMap (List<Long> eventIds) {
+
+        if (eventIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<String> uris = eventIds.stream()
+                .map(id -> "/events/" + id)
+                .toList();
+
+        ResponseEntity<Object> response = statsClient.getStats(
+                LocalDateTime.of(2000, 1, 1, 0, 0),
+                LocalDateTime.now(),
+                uris,
+                true
+        );
+
+        List<ViewStatsDto> stats = objectMapper.convertValue(
+                response.getBody(),
+                new TypeReference<List<ViewStatsDto>>() {
+                }
+        );
+
+        return stats.stream()
+                .collect(Collectors.toMap(
+                        stat -> Long.parseLong(
+                                stat.getUri().substring(
+                                        stat.getUri().lastIndexOf('/') + 1
+                                )
+                        ),
+                        ViewStatsDto::getHits
+                ));
+
+    }
+
+    private Map<Long, Long> getConfirmedRequestsMap (List<Long> eventIds) {
+        //нужно дописать после реализации запросов на участие
+        return Collections.emptyMap();
     }
 }
