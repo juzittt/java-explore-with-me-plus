@@ -26,6 +26,7 @@ import ewm.users.model.User;
 import ewm.users.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -185,8 +186,10 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getUserEvents(Long userId, PaginationParams params) {
+    public List<EventShortDto> getUserEvents(Long userId, PaginationParams params, HttpServletRequest request) {
         getUserOrThrow(userId);
+
+        sendHitToStats("/users" + userId + "/events", request.getRemoteAddr());
 
         PageRequest pageRequest = PageRequest.of(
                 params.getFrom() / params.getSize(),
@@ -320,7 +323,6 @@ public class EventsServiceImpl implements EventsService {
                         ViewStatsDto::getHits,
                         (existing, replacement) -> existing
                 ));
-
     }
 
     private Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {

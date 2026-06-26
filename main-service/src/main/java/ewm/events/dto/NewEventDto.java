@@ -27,7 +27,7 @@ public class NewEventDto {
     private String eventDate;
 
     @NotNull(message = "Локация не может быть пустой")
-    private Location location;
+    private LocationDto location;
 
     @Builder.Default
     private Boolean paid = false;

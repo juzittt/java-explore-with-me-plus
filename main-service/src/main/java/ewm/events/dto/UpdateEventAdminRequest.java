@@ -15,7 +15,7 @@ public class UpdateEventAdminRequest {
     private Long category;
     private String description;
     private String eventDate;
-    private Location location;
+    private LocationDto location;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;

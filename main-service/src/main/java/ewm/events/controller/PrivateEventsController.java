@@ -7,6 +7,7 @@ import ewm.events.dto.UpdateEventUserRequest;
 import ewm.events.dto.params.PaginationParams;
 import ewm.events.dto.params.UserEventPathParams;
 import ewm.events.service.EventsService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -41,7 +42,8 @@ public class PrivateEventsController {
     public ResponseEntity<List<EventShortDto>> getUserEvents(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = "10") @Positive Integer size) {
+            @RequestParam(defaultValue = "10") @Positive Integer size,
+            HttpServletRequest request) {
 
         log.info("GET /users/{}/events: from={}, size={}", userId, from, size);
 
@@ -50,7 +52,7 @@ public class PrivateEventsController {
                 .size(size)
                 .build();
 
-        List<EventShortDto> events = eventsService.getUserEvents(userId, pagination);
+        List<EventShortDto> events = eventsService.getUserEvents(userId, pagination, request);
         return ResponseEntity.ok(events);
     }
 

@@ -17,7 +17,7 @@ public interface EventsService {
 
     EventFullDto createEvent(Long userId, NewEventDto dto);
 
-    List<EventShortDto> getUserEvents(Long userId, PaginationParams params);
+    List<EventShortDto> getUserEvents(Long userId, PaginationParams params, HttpServletRequest request);
 
     EventFullDto getUserEvent(UserEventPathParams params);
 
