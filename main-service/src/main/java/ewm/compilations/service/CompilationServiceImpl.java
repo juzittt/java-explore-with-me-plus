@@ -9,6 +9,7 @@ import ewm.events.model.Event;
 import ewm.events.repository.EventsRepository;
 import ewm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
@@ -30,7 +32,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto save(NewCompilationDto newCompilationDto) {
-
+        log.info("save new compilation {}", newCompilationDto);
         Compilation compilation = compilationMapper.toCompilationfromNewDto(newCompilationDto);
 
         if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
@@ -40,13 +42,13 @@ public class CompilationServiceImpl implements CompilationService {
                     )
             );
         }
-
+        log.info("saves compilation {}", compilation);
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
     public CompilationDto update(Long compId, UpdateCompilationRequest updateCompilationRequest) {
-
+        log.info("update compilation request {}", updateCompilationRequest);
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() ->
                         new NotFoundException(
@@ -65,23 +67,24 @@ public class CompilationServiceImpl implements CompilationService {
                     loadEvents(updateCompilationRequest.getEvents())
             );
         }
-
+        log.info("updates compilation {}", compilation);
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
     public void delete(Long compId) {
-
+        log.info("delete compilation {}", compId);
         if (!compilationRepository.existsById(compId)) {
             throw new NotFoundException(
                     "Compilation with id=" + compId + " was not found");
         }
 
         compilationRepository.deleteById(compId);
+        log.info("deletes compilation {}", compId);
     }
 
     private Set<Event> loadEvents(List<Long> ids) {
-
+        log.info("load events {}", ids);
         if (ids == null || ids.isEmpty()) {
             return new HashSet<>();
         }
@@ -91,29 +94,30 @@ public class CompilationServiceImpl implements CompilationService {
         if (events.size() != ids.size()) {
             throw new NotFoundException("One or more events were not found");
         }
-
+        log.info("load events {}", events.size());
         return new HashSet<>(events);
     }
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
-
+        log.info("get compilations pinned {} from {} size {}", pinned, from, size);
         Pageable pageable = PageRequest.of(from / size, size);
 
-        return compilationRepository.findAllByPinned(pinned, pageable)
-                .stream()
+        List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageable);
+        log.info("get compilations {}", compilations.size());
+        return compilations.stream()
                 .map(compilationMapper::toCompilationDto)
                 .toList();
     }
 
     @Override
     public CompilationDto getCompilationById(Long compId) {
-
+        log.info("get compilation by id {}", compId);
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException(
                         "Compilation with id=" + compId + " was not found"
                 ));
-
+        log.info("get compilation by id {}", compilation);
         return compilationMapper.toCompilationDto(compilation);
     }
 }
