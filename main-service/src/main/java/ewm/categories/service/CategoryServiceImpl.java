@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long catId) {
-        if (!categoryRepository.existsByCategoryId(catId)) {
+        if (!categoryRepository.existsById(catId)) {
             throw new NotFoundException("Категория с id=" + catId + " не найдена");
         }
 
