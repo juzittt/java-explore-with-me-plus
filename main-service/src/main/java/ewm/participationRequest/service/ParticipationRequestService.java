@@ -1,6 +1,6 @@
-package ewm.participationRequests.service;
+package ewm.participationRequest.service;
 
-import ewm.participationRequests.dto.ParticipationRequestDto;
+import ewm.participationRequest.dto.ParticipationRequestDto;
 
 import java.util.List;
 

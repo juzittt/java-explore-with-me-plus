@@ -1,4 +1,4 @@
-package ewm.participationRequests.model;
+package ewm.participationRequest.model;
 
 import ewm.events.model.Event;
 import ewm.users.model.User;
@@ -31,5 +31,5 @@ public class ParticipationRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private RequestStatus requestStatus;
 }

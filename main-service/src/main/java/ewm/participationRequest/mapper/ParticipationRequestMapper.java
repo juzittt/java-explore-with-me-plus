@@ -1,7 +1,7 @@
-package ewm.participationRequests.mapper;
+package ewm.participationRequest.mapper;
 
-import ewm.participationRequests.dto.ParticipationRequestDto;
-import ewm.participationRequests.model.ParticipationRequest;
+import ewm.participationRequest.dto.ParticipationRequestDto;
+import ewm.participationRequest.model.ParticipationRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

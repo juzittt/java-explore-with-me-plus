@@ -2,8 +2,8 @@ package ewm.events.repository.specification;
 
 import ewm.events.model.Event;
 import ewm.events.model.State;
-import ewm.participationRequests.model.ParticipationRequest;
-import ewm.participationRequests.model.Status;
+import ewm.participationRequest.model.ParticipationRequest;
+import ewm.participationRequest.model.RequestStatus;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
@@ -84,7 +84,7 @@ public class EventSpecification {
             subquery.select(cb.count(requestRoot))
                     .where(
                             cb.equal(requestRoot.get("event"), root),
-                            cb.equal(requestRoot.get("status"), Status.CONFIRMED)
+                            cb.equal(requestRoot.get("status"), RequestStatus.CONFIRMED)
                     );
 
             return cb.lessThan(subquery, root.get("participantLimit"));

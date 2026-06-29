@@ -1,6 +1,6 @@
-package ewm.participationRequests.dto;
+package ewm.participationRequest.dto;
 
-import ewm.participationRequests.model.Status;
+import ewm.participationRequest.model.RequestStatus;
 import lombok.Data;
 
 import java.util.List;
@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 public class EventRequestStatusUpdateRequest {
     List<Long> requestIds;
-    Status status;
+    RequestStatus requestStatus;
 }

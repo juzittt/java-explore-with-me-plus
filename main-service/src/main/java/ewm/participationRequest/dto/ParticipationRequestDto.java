@@ -1,6 +1,6 @@
-package ewm.participationRequests.dto;
+package ewm.participationRequest.dto;
 
-import ewm.participationRequests.model.Status;
+import ewm.participationRequest.model.RequestStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,5 +11,5 @@ public class ParticipationRequestDto {
     private Long requester;
     private Long event;
     private LocalDateTime created;
-    private Status status;
+    private RequestStatus requestStatus;
 }
