@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "participation_requests")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParticipationRequests {
+public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -2,7 +2,7 @@ package ewm.events.repository.specification;
 
 import ewm.events.model.Event;
 import ewm.events.model.State;
-import ewm.participationRequests.model.ParticipationRequests;
+import ewm.participationRequests.model.ParticipationRequest;
 import ewm.participationRequests.model.Status;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -80,7 +80,7 @@ public class EventSpecification {
             }
 
             Subquery<Long> subquery = query.subquery(Long.class);
-            Root<ParticipationRequests> requestRoot = subquery.from(ParticipationRequests.class);
+            Root<ParticipationRequest> requestRoot = subquery.from(ParticipationRequest.class);
             subquery.select(cb.count(requestRoot))
                     .where(
                             cb.equal(requestRoot.get("event"), root),
