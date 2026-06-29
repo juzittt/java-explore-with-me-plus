@@ -1,7 +1,8 @@
 package ewm.participationRequests.model;
 
-public enum Status {
+public enum ParticipationStatus {
     PENDING,
     REJECTED,
-    CONFIRMED
+    CONFIRMED,
+    CANCELED
 }

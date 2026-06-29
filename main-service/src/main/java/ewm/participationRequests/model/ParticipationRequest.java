@@ -31,5 +31,5 @@ public class ParticipationRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private ParticipationStatus status;
 }
