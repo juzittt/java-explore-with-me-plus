@@ -15,27 +15,24 @@ public interface ParticipationRequestsRepository
         extends JpaRepository<ParticipationRequest, Long> {
 
     @Query("""
-        select new ewm.participationRequest.dto.EventRequestsCountDto(
-            r.event.id,
-            count(r.id)
-        )
-        from ParticipationRequest r
-        where r.requestStatus = ewm.participationRequest.model.RequestStatus.CONFIRMED
-          and r.event.id in :eventIds
-        group by r.event.id
-        """)
+            select new ewm.participationRequest.dto.EventRequestsCountDto(
+                r.event.id,
+                count(r.id)
+            )
+            from ParticipationRequest r
+            where r.requestStatus = ewm.participationRequest.model.RequestStatus.CONFIRMED
+              and r.event.id in :eventIds
+            group by r.event.id
+            """)
     List<EventRequestsCountDto> getConfirmedRequests(@Param("eventIds") List<Long> eventIds);
 
-    @EntityGraph(attributePaths = {"requester","event", "event.initiator"})
+    @EntityGraph(attributePaths = {"requester", "event", "event.initiator"})
     List<ParticipationRequest> findAllByRequester_Id(Long requesterId);
 
-    @EntityGraph(attributePaths = {"requester","event", "event.initiator"})
-    Optional<ParticipationRequest> findByIdAndRequester_Id(Long id,
-                                                          Long requesterId);
+    @EntityGraph(attributePaths = {"requester", "event", "event.initiator"})
+    Optional<ParticipationRequest> findByIdAndRequester_Id(Long id, Long requesterId);
 
-    boolean existsByRequester_IdAndEvent_Id(Long requesterId,
-                                          Long eventId);
+    boolean existsByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
 
-    long countByEvent_IdAndRequestStatus(Long eventId,
-                                 RequestStatus requestStatus);
+    long countByEvent_IdAndRequestStatus(Long eventId, RequestStatus requestStatus);
 }
