@@ -33,6 +33,7 @@ public class NewEventDto {
     private Boolean paid = false;
 
     @Builder.Default
+    @Positive
     private Integer participantLimit = 0;
 
     @Builder.Default
