@@ -17,6 +17,7 @@ import ewm.participationRequests.mapper.ParticipationRequestMapper;
 import ewm.events.repository.EventsRepository;
 import ewm.events.model.State;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -88,6 +89,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         request.setRequester(user);
         request.setEvent(event);
+        request.setCreated(LocalDateTime.now());
 
         ParticipationRequest saveRequest = requestRepository.save(request);
 
