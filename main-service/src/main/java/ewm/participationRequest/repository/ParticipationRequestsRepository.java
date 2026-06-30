@@ -1,8 +1,10 @@
 package ewm.participationRequest.repository;
 
+import ewm.events.model.Event;
 import ewm.participationRequest.dto.EventRequestsCountDto;
 import ewm.participationRequest.model.ParticipationRequest;
-import ewm.participationRequest.model.RequestStatus;
+import ewm.participationRequest.model.ParticipationStatus;
+import ewm.users.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,7 +22,7 @@ public interface ParticipationRequestsRepository
                 count(r.id)
             )
             from ParticipationRequest r
-            where r.requestStatus = ewm.participationRequest.model.RequestStatus.CONFIRMED
+            where r.status = ewm.participationRequest.model.ParticipationStatus.CONFIRMED
               and r.event.id in :eventIds
             group by r.event.id
             """)
@@ -34,5 +36,13 @@ public interface ParticipationRequestsRepository
 
     boolean existsByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
 
-    long countByEvent_IdAndRequestStatus(Long eventId, RequestStatus requestStatus);
+    long countByEvent_IdAndStatus(Long eventId, ParticipationStatus status);
+
+    //@EntityGraph(attributePaths = {"requester", "event", "event.initiator"})
+    List<ParticipationRequest> findByRequester(User requester);
+
+    //@EntityGraph(attributePaths = {"requester", "event", "event.initiator"})
+    Long countByEventAndStatus(Event event, ParticipationStatus status);
+
+    boolean existsByRequesterAndEvent(User requester, Event event);
 }

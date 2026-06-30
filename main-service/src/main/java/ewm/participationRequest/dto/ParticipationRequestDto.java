@@ -1,7 +1,7 @@
-package ewm.participationRequests.dto;
+package ewm.participationRequest.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import ewm.participationRequests.model.ParticipationStatus;
+import ewm.participationRequest.model.ParticipationStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;

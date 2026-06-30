@@ -1,4 +1,4 @@
-package ewm.participationRequests.model;
+package ewm.participationRequest.model;
 
 import ewm.events.model.Event;
 import ewm.users.model.User;

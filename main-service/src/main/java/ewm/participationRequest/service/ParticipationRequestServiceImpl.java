@@ -1,19 +1,19 @@
-package ewm.participationRequests.service;
+package ewm.participationRequest.service;
 
 import ewm.events.model.Event;
 import ewm.exception.ConflictException;
 import ewm.exception.ValidationException;
-import ewm.participationRequests.dto.ParticipationRequestDto;
-import ewm.participationRequests.model.ParticipationRequest;
-import ewm.participationRequests.model.ParticipationStatus;
+import ewm.participationRequest.dto.ParticipationRequestDto;
+import ewm.participationRequest.model.ParticipationRequest;
+import ewm.participationRequest.model.ParticipationStatus;
 import ewm.users.model.User;
 import ewm.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ewm.exception.NotFoundException;
-import ewm.participationRequests.repository.ParticipationRequestsRepository;
-import ewm.participationRequests.mapper.ParticipationRequestMapper;
+import ewm.participationRequest.repository.ParticipationRequestsRepository;
+import ewm.participationRequest.mapper.ParticipationRequestMapper;
 import ewm.events.repository.EventsRepository;
 import ewm.events.model.State;
 

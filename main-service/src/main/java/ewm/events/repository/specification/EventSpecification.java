@@ -2,8 +2,8 @@ package ewm.events.repository.specification;
 
 import ewm.events.model.Event;
 import ewm.events.model.State;
-import ewm.participationRequests.model.ParticipationRequest;
-import ewm.participationRequests.model.ParticipationStatus;
+import ewm.participationRequest.model.ParticipationRequest;
+import ewm.participationRequest.model.ParticipationStatus;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
