@@ -1,4 +1,4 @@
-package ewm.participationRequests.dto;
+package ewm.participationRequest.dto;
 
 import lombok.Data;
 
