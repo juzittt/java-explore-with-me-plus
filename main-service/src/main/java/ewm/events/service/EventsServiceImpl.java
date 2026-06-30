@@ -20,7 +20,13 @@ import ewm.events.repository.specification.EventSpecification;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.exception.ValidationException;
+import ewm.participationRequest.dto.EventRequestStatusUpdateRequest;
+import ewm.participationRequest.dto.EventRequestStatusUpdateResult;
 import ewm.participationRequest.dto.EventRequestsCountDto;
+import ewm.participationRequest.dto.ParticipationRequestDto;
+import ewm.participationRequest.mapper.ParticipationRequestMapper;
+import ewm.participationRequest.model.ParticipationRequest;
+import ewm.participationRequest.model.ParticipationStatus;
 import ewm.participationRequest.repository.ParticipationRequestsRepository;
 import ewm.users.model.User;
 import ewm.users.repository.UserRepository;
@@ -36,10 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +57,7 @@ public class EventsServiceImpl implements EventsService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final ParticipationRequestsRepository participationRequestsRepository;
+    private final ParticipationRequestMapper participationRequestMapper;
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -271,6 +275,106 @@ public class EventsServiceImpl implements EventsService {
         enrichEventWithStats(result);
 
         return result;
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getEventRequests(Long userId, Long eventId) {
+        Event event = eventsRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new ValidationException("Event с id=" + eventId + " не найден"));
+
+        List<ParticipationRequest> participationRequests = participationRequestsRepository.findAllByEventId(eventId);
+        return participationRequestMapper.toDtoList(participationRequests);
+    }
+
+    @Override
+    @Transactional
+    public EventRequestStatusUpdateResult updateEventRequests(Long userId, Long eventId,
+                                                              EventRequestStatusUpdateRequest request) {
+        Event event = eventsRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotFoundException("Event с id=" + eventId + " не найден"));
+
+        List<Long> requestIds = request.getRequestIds();
+        if (requestIds == null || requestIds.isEmpty()) {
+            return EventRequestStatusUpdateResult.builder()
+                    .confirmedRequests(List.of())
+                    .rejectedRequests(List.of())
+                    .build();
+        }
+
+        List<ParticipationRequest> requests = participationRequestsRepository.findAllById(requestIds);
+
+        boolean hasNotPending = requests.stream()
+                .anyMatch(r -> r.getStatus() != ParticipationStatus.PENDING);
+        if (hasNotPending) {
+            throw new ConflictException("статус можно изменить только у заявок, находящихся в состоянии ожидания");
+        }
+
+        ParticipationStatus targetStatus = request.getStatus();
+        if (targetStatus != ParticipationStatus.CONFIRMED && targetStatus != ParticipationStatus.REJECTED) {
+            throw new ConflictException("доступные статусы только CONFIRMED/REJECTED");
+        }
+
+        if (targetStatus == ParticipationStatus.REJECTED) {
+            requests.forEach(r -> r.setStatus(ParticipationStatus.REJECTED));
+            List<ParticipationRequest> saved = participationRequestsRepository.saveAll(requests);
+
+            List<ParticipationRequestDto> toResponse = participationRequestMapper.toDtoList(saved);
+            return EventRequestStatusUpdateResult.builder()
+                    .confirmedRequests(List.of())
+                    .rejectedRequests(toResponse)
+                    .build();
+        }
+
+        Integer limit = event.getParticipantLimit();
+        if (limit != null && limit > 0) {
+            long alreadyConfirmed = participationRequestsRepository.countByEventIdAndStatus(eventId,
+                    ParticipationStatus.CONFIRMED);
+            long available = limit - alreadyConfirmed;
+
+            if (available <= 0) {
+                throw new ConflictException("достигнут лимит по заявкам на данное событие");
+            }
+
+            List<ParticipationRequest> toConfirm = new ArrayList<>();
+            List<ParticipationRequest> toReject = new ArrayList<>();
+
+            for (ParticipationRequest r : requests) {
+                if (available > 0) {
+                    r.setStatus(ParticipationStatus.CONFIRMED);
+                    toConfirm.add(r);
+                    available--;
+                } else {
+                    r.setStatus(ParticipationStatus.REJECTED);
+                    toReject.add(r);
+                }
+            }
+
+            participationRequestsRepository.saveAll(requests);
+
+            long confirmedNow = toConfirm.size();
+            long totalConfirmed = alreadyConfirmed + confirmedNow;
+            if (totalConfirmed >= limit) {
+                List<ParticipationRequest> pending = participationRequestsRepository.findAllByEventIdAndStatus(eventId,
+                        ParticipationStatus.PENDING);
+
+                pending.forEach(r -> r.setStatus(ParticipationStatus.REJECTED));
+                participationRequestsRepository.saveAll(pending);
+            }
+
+            return EventRequestStatusUpdateResult.builder()
+                    .confirmedRequests(participationRequestMapper.toDtoList(toConfirm))
+                    .rejectedRequests(participationRequestMapper.toDtoList(toReject))
+                    .build();
+        }
+
+
+        requests.forEach(r -> r.setStatus(ParticipationStatus.CONFIRMED));
+        List<ParticipationRequest> saved = participationRequestsRepository.saveAll(requests);
+
+        return EventRequestStatusUpdateResult.builder()
+                .confirmedRequests(participationRequestMapper.toDtoList(saved))
+                .rejectedRequests(List.of())
+                .build();
     }
 
     private void sendHitToStats(String uri, String ip) {

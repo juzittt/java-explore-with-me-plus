@@ -36,7 +36,7 @@ public interface ParticipationRequestsRepository
 
     boolean existsByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
 
-    long countByEvent_IdAndStatus(Long eventId, ParticipationStatus status);
+    long countByEventIdAndStatus(Long eventId, ParticipationStatus status);
 
     //@EntityGraph(attributePaths = {"requester", "event", "event.initiator"})
     List<ParticipationRequest> findByRequester(User requester);
@@ -45,4 +45,8 @@ public interface ParticipationRequestsRepository
     Long countByEventAndStatus(Event event, ParticipationStatus status);
 
     boolean existsByRequesterAndEvent(User requester, Event event);
+
+    List<ParticipationRequest> findAllByEventId(Long eventId);
+
+    List<ParticipationRequest> findAllByEventIdAndStatus(Long eventId, ParticipationStatus status);
 }

@@ -5,6 +5,9 @@ import ewm.events.dto.params.AdminEventParams;
 import ewm.events.dto.params.PaginationParams;
 import ewm.events.dto.params.PublicEventParams;
 import ewm.events.dto.params.UserEventPathParams;
+import ewm.participationRequest.dto.EventRequestStatusUpdateRequest;
+import ewm.participationRequest.dto.EventRequestStatusUpdateResult;
+import ewm.participationRequest.dto.ParticipationRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -26,4 +29,9 @@ public interface EventsService {
     List<EventFullDto> getAdminEvents(AdminEventParams params);
 
     EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest request);
+
+    List<ParticipationRequestDto> getEventRequests(Long userId, Long eventId);
+
+    EventRequestStatusUpdateResult updateEventRequests(Long userId, Long eventId,
+                                                       EventRequestStatusUpdateRequest request);
 }
