@@ -1,6 +1,5 @@
 package ewm.events.dto;
 
-import ewm.events.model.Location;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +32,7 @@ public class NewEventDto {
     private Boolean paid = false;
 
     @Builder.Default
-    @Positive
+    @PositiveOrZero(message = "Лимит участников не может быть отрицательным")
     private Integer participantLimit = 0;
 
     @Builder.Default

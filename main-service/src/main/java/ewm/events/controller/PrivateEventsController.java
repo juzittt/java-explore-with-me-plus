@@ -33,7 +33,8 @@ public class PrivateEventsController {
     private final EventsService eventsService;
 
     @PostMapping
-    public ResponseEntity<EventFullDto> createEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto dto) {
+    public ResponseEntity<EventFullDto> createEvent(@PathVariable Long userId,
+                                                    @Valid @RequestBody NewEventDto dto) {
 
         log.info("POST /users/{}/events: creating event", userId);
 
