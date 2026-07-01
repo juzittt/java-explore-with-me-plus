@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewEventDto {
+
     @NotBlank(message = "Аннотация не может быть пустой")
     @Size(min = 20, max = 2000, message = "Аннотация должна быть от 20 до 2000 символов")
     private String annotation;

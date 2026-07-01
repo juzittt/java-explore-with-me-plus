@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Location {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

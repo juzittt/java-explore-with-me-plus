@@ -33,7 +33,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto save(NewCompilationDto newCompilationDto) {
         log.info("save new compilation {}", newCompilationDto);
-        Compilation compilation = compilationMapper.toCompilationfromNewDto(newCompilationDto);
+        Compilation compilation = compilationMapper.toCompilationFromNewDto(newCompilationDto);
 
         if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
             compilation.setEvents(
@@ -67,7 +67,7 @@ public class CompilationServiceImpl implements CompilationService {
                     loadEvents(updateCompilationRequest.getEvents())
             );
         }
-        log.info("updates compilation {}", compilation);
+        log.info("Updates compilation {}", compilation);
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
@@ -80,11 +80,11 @@ public class CompilationServiceImpl implements CompilationService {
         }
 
         compilationRepository.deleteById(compId);
-        log.info("deletes compilation {}", compId);
+        log.info("Deletes compilation {}", compId);
     }
 
     private Set<Event> loadEvents(List<Long> ids) {
-        log.info("load events {}", ids);
+        log.info("Load events {}", ids);
         if (ids == null || ids.isEmpty()) {
             return new HashSet<>();
         }
@@ -94,13 +94,13 @@ public class CompilationServiceImpl implements CompilationService {
         if (events.size() != ids.size()) {
             throw new NotFoundException("One or more events were not found");
         }
-        log.info("load events {}", events.size());
+        log.info("Load events {}", events.size());
         return new HashSet<>(events);
     }
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
-        log.info("get compilations pinned {} from {} size {}", pinned, from, size);
+        log.info("Get compilations pinned {} from {} size {}", pinned, from, size);
         Pageable pageable = PageRequest.of(from / size, size);
 
         List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageable);
@@ -117,7 +117,7 @@ public class CompilationServiceImpl implements CompilationService {
                 .orElseThrow(() -> new NotFoundException(
                         "Compilation with id=" + compId + " was not found"
                 ));
-        log.info("get compilation by id {}", compilation);
+        log.info("Get compilation by id {}", compilation);
         return compilationMapper.toCompilationDto(compilation);
     }
 }

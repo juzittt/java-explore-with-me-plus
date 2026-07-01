@@ -8,10 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
-/*
-Решил сделать через Specification,
-чтоб упростить работу, а то слишком много фильтров
-*/
 public interface EventsRepository extends
         JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
 

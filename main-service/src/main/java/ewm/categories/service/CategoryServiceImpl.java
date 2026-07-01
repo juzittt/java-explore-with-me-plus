@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         if (eventRepository.existsByCategoryId(catId)) {
-            throw new ConflictException("The category is not empty");
+            throw new ConflictException("Категория с id=" + catId +" используется в событиях.");
         }
 
         categoryRepository.deleteById(catId);

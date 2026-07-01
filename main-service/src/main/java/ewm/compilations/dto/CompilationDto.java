@@ -9,10 +9,7 @@ import java.util.List;
 public class CompilationDto {
 
     private Long id;
-
     private String title;
-
     private Boolean pinned;
-
     private List<EventShortDto> events;
 }

@@ -9,7 +9,6 @@ import java.util.List;
 public class UpdateCompilationRequest {
 
     private List<Long> events;
-
     private Boolean pinned;
 
     @Size(max = 50)

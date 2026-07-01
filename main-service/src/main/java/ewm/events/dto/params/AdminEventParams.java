@@ -14,11 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminEventParams {
+
     private List<Long> users;
     private List<String> states;
     private List<Long> categories;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rangeStart;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rangeEnd;
     private Integer from = 0;
