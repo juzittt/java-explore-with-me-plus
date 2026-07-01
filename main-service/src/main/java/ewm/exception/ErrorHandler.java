@@ -58,7 +58,7 @@ public class ErrorHandler {
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(fieldError -> String.format("Поле %s %s. Value: %s",
+                .map(fieldError -> String.format("Field %s %s. Value: %s",
                         fieldError.getField(),
                         fieldError.getDefaultMessage(),
                         fieldError.getRejectedValue()))

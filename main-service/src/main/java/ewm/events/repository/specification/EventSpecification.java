@@ -87,7 +87,10 @@ public class EventSpecification {
                             cb.equal(requestRoot.get("status"), ParticipationStatus.CONFIRMED)
                     );
 
-            return cb.lessThan(subquery, root.get("participantLimit"));
+            return cb.or(
+                    cb.equal(root.get("participantLimit"), 0),
+                    cb.lessThan(subquery, root.get("participantLimit"))
+            );
         };
     }
 
