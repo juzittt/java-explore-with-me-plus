@@ -18,4 +18,6 @@ public interface EventsRepository extends
     Page<Event> findByInitiatorId(Long initiatorId, Pageable pageable);
 
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long initiatorId);
+
+    boolean existsByCategoryId(Long categoryId);
 }

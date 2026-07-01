@@ -27,7 +27,5 @@ public class UpdateEventAdminRequest {
     private Integer participantLimit;
     private Boolean requestModeration;
     private StateAction stateAction;
-
-    @Size(min = 3, max = 120, message = "Заголовок должен быть от 3 до 120 символов")
     private String title;
 }

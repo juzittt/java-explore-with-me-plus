@@ -5,10 +5,10 @@ import ewm.categories.dto.NewCategoryDto;
 import ewm.categories.mapper.CategoryMapper;
 import ewm.categories.model.Category;
 import ewm.categories.repository.CategoryRepository;
+import ewm.events.repository.EventsRepository;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final EventsRepository eventRepository;
 
     @Override
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
@@ -53,11 +54,11 @@ public class CategoryServiceImpl implements CategoryService {
             throw new NotFoundException("Категория с id=" + catId + " не найдена");
         }
 
-        try {
-            categoryRepository.deleteById(catId);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Категория используется в событиях и не может быть удалена");
+        if (eventRepository.existsByCategoryId(catId)) {
+            throw new ConflictException("The category is not empty");
         }
+
+        categoryRepository.deleteById(catId);
     }
 
     @Override
