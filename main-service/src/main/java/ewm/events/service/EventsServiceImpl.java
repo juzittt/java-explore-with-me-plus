@@ -522,6 +522,15 @@ public class EventsServiceImpl implements EventsService {
             if (event.getState() == State.PUBLISHED && eventDate.isBefore(event.getPublishedOn().plusHours(1))) {
                 throw new ConflictException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
             }
+
+            if (eventDate.isBefore(LocalDateTime.now())) {
+                throw new ValidationException("Дата события не может быть в прошлом");
+            }
+
+            if (event.getState() == State.PUBLISHED && eventDate.isBefore(event.getPublishedOn().plusHours(1))) {
+                throw new ConflictException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
+            }
+
             event.setEventDate(eventDate);
         }
 
