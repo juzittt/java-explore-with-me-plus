@@ -54,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new NotFoundException("Категория с id=" + catId + " не найдена");
         }
 
-        if (eventRepository.existsByCategoryId(catId)) {
+        if (eventRepository.existsByCategory_Id(catId)) {
             throw new ConflictException("Категория с id=" + catId +" используется в событиях.");
         }
 
