@@ -5,6 +5,7 @@ import ewm.categories.dto.NewCategoryDto;
 import ewm.categories.mapper.CategoryMapper;
 import ewm.categories.model.Category;
 import ewm.categories.repository.CategoryRepository;
+import ewm.events.repository.EventsRepository;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final EventsRepository eventRepository;
 
     @Override
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
@@ -37,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Категория с id=" + catId + " не найдена"));
 
-        if (categoryRepository.existsByName(categoryDto.getName())) {
+        if (categoryRepository.existsByNameAndIdNot(categoryDto.getName(), catId)) {
             throw new ConflictException("Категория с таким названием уже существует");
         }
 
@@ -51,6 +53,11 @@ public class CategoryServiceImpl implements CategoryService {
         if (!categoryRepository.existsById(catId)) {
             throw new NotFoundException("Категория с id=" + catId + " не найдена");
         }
+
+        if (eventRepository.existsByCategory_Id(catId)) {
+            throw new ConflictException("Категория с id=" + catId +" используется в событиях.");
+        }
+
         categoryRepository.deleteById(catId);
     }
 

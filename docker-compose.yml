@@ -11,6 +11,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
+    networks:
+      - app-network
 
   stats-db:
     image: postgres:16.1
@@ -28,10 +30,25 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+    networks:
+      - app-network
 
-  #ewm-service:
-  #  ports:
-  #    - "8080:8080"
+  ewm-service:
+    ports:
+      - "8080:8080"
+    build: ./main-service
+    image: main-service
+    container_name: main-service
+    depends_on:
+      - ewm-db
+      - stats-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - STATS_SERVER_URL=http://stats-server:9090
+    networks:
+      - app-network
 
   ewm-db:
     image: postgres:16.1
@@ -49,3 +66,9 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
