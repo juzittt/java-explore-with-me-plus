@@ -2,6 +2,7 @@ package ewm.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,10 +19,15 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult()
-                .getFieldErrors()
+                .getAllErrors()
                 .stream()
                 .findFirst()
-                .map(fieldError -> String.format("Поле %s %s", fieldError.getField(), fieldError.getDefaultMessage()))
+                .map(error -> {
+                    if (error instanceof FieldError fieldError) {
+                        return String.format("Поле %s %s", fieldError.getField(), fieldError.getDefaultMessage());
+                    }
+                    return error.getDefaultMessage();
+                })
                 .orElse(VALIDATION_ERROR);
 
         log.warn(LOG_VALIDATION_ERROR, message);

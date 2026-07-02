@@ -4,6 +4,7 @@ import ewm.users.dto.NewUserRequest;
 import ewm.users.dto.UserDto;
 import ewm.users.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class AdminUserController {
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers(
             @RequestParam(required = false) List<Long> ids,
-            @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = "10") @PositiveOrZero Integer size) {
         log.info("GET /admin/users: ids={}, from={}, size={}", ids, from, size);
         List<UserDto> users = userService.getUsers(ids, from, size);
         return ResponseEntity.ok(users);
