@@ -51,7 +51,7 @@ services:
       - app-network
 
   ewm-db:
-    image: postgres:16.1
+    image: postgis/postgis:16-3.4
     container_name: ewm-db
     ports:
       - "6502:5432"
