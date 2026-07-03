@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "4f622f31-328a-4506-95bd-66359cfbe749",
-    "name": "Test Explore With Me Locations - Main service",
+    "name": "Test Explore With Me - Main service + Locations",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "23073145"
   },
@@ -995,6 +995,522 @@
       ]
     },
     {
+      "name": "Public Location Endpoints",
+      "description": "Тесты для публичных эндпоинтов поиска событий по координатам",
+      "item": [
+        {
+          "name": "Поиск событий в радиусе от точки",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const main = async () => {",
+                  "    const api = new API(pm);",
+                  "    const rnd = new RandomUtils();",
+                  "",
+                  "    try {",
+                  "        const user = await api.addUser(rnd.getUser());",
+                  "        const category = await api.addCategory(rnd.getCategory());",
+                  "",
+                  "        // Создаём событие с конкретными координатами (Красная площадь)",
+                  "        let eventBody = rnd.getEvent(category.id);",
+                  "        eventBody.location = {",
+                  "            lat: 55.7539,",
+                  "            lon: 37.6208",
+                  "        };",
+                  "",
+                  "        let event = await api.addEvent(user.id, eventBody);",
+                  "        event = await api.publishEvent(event.id);",
+                  "",
+                  "        pm.collectionVariables.set('uid', user.id);",
+                  "        pm.collectionVariables.set('eid', event.id);",
+                  "        pm.collectionVariables.set('response', event);",
+                  "    } catch(err) {",
+                  "        console.error('Ошибка при подготовке тестовых данных. ', err);",
+                  "    }",
+                  "};",
+                  "",
+                  "const interval = setInterval(() => {}, 1000);",
+                  "setTimeout(async () => {",
+                  "    try { await main(); } catch (e) { console.error(e); } finally { clearInterval(interval); }",
+                  "}, 100);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 200 и данные в формате json', function () {",
+                  "    pm.response.to.be.ok;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const target = pm.response.json();",
+                  "const source = pm.collectionVariables.get('response');",
+                  "",
+                  "pm.test('Должно быть найдено хотя бы одно событие', function () {",
+                  "    pm.expect(target.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test('Найденное событие должно содержать поля: eventId, title, annotation, eventDate, paid, distance', function () {",
+                  "    pm.expect(target[0]).to.have.property('eventId');",
+                  "    pm.expect(target[0]).to.have.property('title');",
+                  "    pm.expect(target[0]).to.have.property('annotation');",
+                  "    pm.expect(target[0]).to.have.property('eventDate');",
+                  "    pm.expect(target[0]).to.have.property('paid');",
+                  "    pm.expect(target[0]).to.have.property('distance');",
+                  "});",
+                  "",
+                  "pm.test('ID найденного события должен совпадать с созданным', function () {",
+                  "    pm.expect(target[0].eventId).equal(source.id);",
+                  "});",
+                  "",
+                  "pm.test('Расстояние должно быть положительным числом', function () {",
+                  "    pm.expect(target[0].distance).to.be.a('number');",
+                  "    pm.expect(target[0].distance).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test('Расстояние должно быть небольшим (точка поиска очень близка к событию)', function () {",
+                  "    pm.expect(target[0].distance).to.be.lessThan(100);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=37.621&radius=5000",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "locations", "near"],
+              "query": [
+                { "key": "lat", "value": "55.754" },
+                { "key": "lon", "value": "37.621" },
+                { "key": "radius", "value": "5000" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Поиск событий в радиусе - событие вне зоны",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const main = async () => {",
+                  "    const api = new API(pm);",
+                  "    const rnd = new RandomUtils();",
+                  "",
+                  "    try {",
+                  "        const user = await api.addUser(rnd.getUser());",
+                  "        const category = await api.addCategory(rnd.getCategory());",
+                  "",
+                  "        // Создаём событие в Москве (Красная площадь)",
+                  "        let eventBody = rnd.getEvent(category.id);",
+                  "        eventBody.location = {",
+                  "            lat: 55.7539,",
+                  "            lon: 37.6208",
+                  "        };",
+                  "",
+                  "        let event = await api.addEvent(user.id, eventBody);",
+                  "        event = await api.publishEvent(event.id);",
+                  "",
+                  "        pm.collectionVariables.set('response', event);",
+                  "    } catch(err) {",
+                  "        console.error('Ошибка при подготовке тестовых данных. ', err);",
+                  "    }",
+                  "};",
+                  "",
+                  "const interval = setInterval(() => {}, 1000);",
+                  "setTimeout(async () => {",
+                  "    try { await main(); } catch (e) { console.error(e); } finally { clearInterval(interval); }",
+                  "}, 100);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 200 и данные в формате json', function () {",
+                  "    pm.response.to.be.ok;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const target = pm.response.json();",
+                  "",
+                  "pm.test('Список событий должен быть пустым (событие вне радиуса)', function () {",
+                  "    pm.expect(target).to.be.an('array');",
+                  "    pm.expect(target.length).to.equal(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/locations/near?lat=48.8566&lon=2.3522&radius=1000",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "locations", "near"],
+              "query": [
+                { "key": "lat", "value": "48.8566", "description": "Париж - далеко от Москвы" },
+                { "key": "lon", "value": "2.3522" },
+                { "key": "radius", "value": "1000", "description": "Радиус 1 км" }
+              ]
+            },
+            "description": "Событие в Москве, поиск в Париже - должно быть пусто"
+          }
+        },
+        {
+          "name": "Получение расстояния до события",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const main = async () => {",
+                  "    const api = new API(pm);",
+                  "    const rnd = new RandomUtils();",
+                  "",
+                  "    try {",
+                  "        const user = await api.addUser(rnd.getUser());",
+                  "        const category = await api.addCategory(rnd.getCategory());",
+                  "",
+                  "        // Создаём событие с конкретными координатами (Красная площадь)",
+                  "        let eventBody = rnd.getEvent(category.id);",
+                  "        eventBody.location = {",
+                  "            lat: 55.7539,",
+                  "            lon: 37.6208",
+                  "        };",
+                  "",
+                  "        let event = await api.addEvent(user.id, eventBody);",
+                  "        event = await api.publishEvent(event.id);",
+                  "",
+                  "        pm.collectionVariables.set('uid', user.id);",
+                  "        pm.collectionVariables.set('eid', event.id);",
+                  "        pm.collectionVariables.set('response', event);",
+                  "    } catch(err) {",
+                  "        console.error('Ошибка при подготовке тестовых данных. ', err);",
+                  "    }",
+                  "};",
+                  "",
+                  "const interval = setInterval(() => {}, 1000);",
+                  "setTimeout(async () => {",
+                  "    try { await main(); } catch (e) { console.error(e); } finally { clearInterval(interval); }",
+                  "}, 100);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 200 и данные в формате json', function () {",
+                  "    pm.response.to.be.ok;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const target = pm.response.json();",
+                  "const source = pm.collectionVariables.get('response');",
+                  "",
+                  "pm.test('Ответ должен содержать поля: eventId, distance', function () {",
+                  "    pm.expect(target).to.have.property('eventId');",
+                  "    pm.expect(target).to.have.property('distance');",
+                  "});",
+                  "",
+                  "pm.test('eventId должен совпадать с запрошенным', function () {",
+                  "    pm.expect(target.eventId).equal(source.id);",
+                  "});",
+                  "",
+                  "pm.test('Расстояние должно быть положительным числом', function () {",
+                  "    pm.expect(target.distance).to.be.a('number');",
+                  "    pm.expect(target.distance).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test('Расстояние должно быть разумным (точка в ~200м от события)', function () {",
+                  "    pm.expect(target.distance).to.be.greaterThan(100);",
+                  "    pm.expect(target.distance).to.be.lessThan(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/:eventId/locations/distance?lat=55.755&lon=37.622",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", ":eventId", "locations", "distance"],
+              "query": [
+                { "key": "lat", "value": "55.755", "description": "Точка в ~200м от Красной площади" },
+                { "key": "lon", "value": "37.622" }
+              ],
+              "variable": [
+                { "key": "eventId", "value": "{{eid}}", "description": "(Required) id события" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Получение расстояния до несуществующего события",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 404 и данные в формате json', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/999999/locations/distance?lat=55.755&lon=37.622",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "999999", "locations", "distance"],
+              "query": [
+                { "key": "lat", "value": "55.755" },
+                { "key": "lon", "value": "37.622" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Поиск событий с невалидной широтой",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 400 и данные в формате json', function () {",
+                  "    pm.response.to.be.badRequest;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/locations/near?lat=95.0&lon=37.621&radius=5000",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "locations", "near"],
+              "query": [
+                { "key": "lat", "value": "95.0", "description": "Широта > 90 - невалидно" },
+                { "key": "lon", "value": "37.621" },
+                { "key": "radius", "value": "5000" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Поиск событий с невалидной долготой",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 400 и данные в формате json', function () {",
+                  "    pm.response.to.be.badRequest;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=200.0&radius=5000",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "locations", "near"],
+              "query": [
+                { "key": "lat", "value": "55.754" },
+                { "key": "lon", "value": "200.0", "description": "Долгота > 180 - невалидно" },
+                { "key": "radius", "value": "5000" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Поиск событий с отрицательным радиусом",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 400 и данные в формате json', function () {",
+                  "    pm.response.to.be.badRequest;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=37.621&radius=-100",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "locations", "near"],
+              "query": [
+                { "key": "lat", "value": "55.754" },
+                { "key": "lon", "value": "37.621" },
+                { "key": "radius", "value": "-100", "description": "Отрицательный радиус - невалидно" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Получение расстояния с невалидной широтой",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 400 и данные в формате json', function () {",
+                  "    pm.response.to.be.badRequest;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/1/locations/distance?lat=-100.0&lon=37.622",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "1", "locations", "distance"],
+              "query": [
+                { "key": "lat", "value": "-100.0", "description": "Широта < -90 - невалидно" },
+                { "key": "lon", "value": "37.622" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Сортировка событий по расстоянию",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const main = async () => {",
+                  "    const api = new API(pm);",
+                  "    const rnd = new RandomUtils();",
+                  "",
+                  "    try {",
+                  "        const user = await api.addUser(rnd.getUser());",
+                  "        const category = await api.addCategory(rnd.getCategory());",
+                  "",
+                  "        // Создаём 3 события на разных расстояниях от точки поиска",
+                  "        const locations = [",
+                  "            { lat: 55.7539, lon: 37.6208 }, // ~100м",
+                  "            { lat: 55.7600, lon: 37.6300 }, // ~1км",
+                  "            { lat: 55.7700, lon: 37.6500 }  // ~3км",
+                  "        ];",
+                  "",
+                  "        for (const loc of locations) {",
+                  "            let eventBody = rnd.getEvent(category.id);",
+                  "            eventBody.location = loc;",
+                  "            let event = await api.addEvent(user.id, eventBody);",
+                  "            await api.publishEvent(event.id);",
+                  "        }",
+                  "    } catch(err) {",
+                  "        console.error('Ошибка при подготовке тестовых данных. ', err);",
+                  "    }",
+                  "};",
+                  "",
+                  "const interval = setInterval(() => {}, 1000);",
+                  "setTimeout(async () => {",
+                  "    try { await main(); } catch (e) { console.error(e); } finally { clearInterval(interval); }",
+                  "}, 100);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ответ должен содержать код статуса 200 и данные в формате json', function () {",
+                  "    pm.response.to.be.ok;",
+                  "    pm.response.to.be.withBody;",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "const target = pm.response.json();",
+                  "",
+                  "pm.test('Должно быть найдено 3 события', function () {",
+                  "    pm.expect(target.length).to.equal(3);",
+                  "});",
+                  "",
+                  "pm.test('События должны быть отсортированы по расстоянию (от ближнего к дальнему)', function () {",
+                  "    for (let i = 0; i < target.length - 1; i++) {",
+                  "        pm.expect(target[i].distance).to.be.at.most(target[i+1].distance,",
+                  "            'Событие ' + i + ' (distance=' + target[i].distance + ') должно быть ближе, чем событие ' + (i+1) + ' (distance=' + target[i+1].distance + ')');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=37.621&radius=10000",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "locations", "near"],
+              "query": [
+                { "key": "lat", "value": "55.754" },
+                { "key": "lon", "value": "37.621" },
+                { "key": "radius", "value": "10000", "description": "Радиус 10 км, чтобы найти все 3 события" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Validation",
       "item": [
         {
@@ -1165,6 +1681,14 @@
           "",
           "    async getAllLocations(from=0, size=10, verbose=null) {",
           "        return this.get('/admin/locations?from=' + from + '&size=' + size, null, \"Ошибка при получении списка локаций\", verbose);",
+          "    }",
+          "",
+          "    async findEventsNearLocation(lat, lon, radius, verbose=null) {",
+          "        return this.get('/events/locations/near?lat=' + lat + '&lon=' + lon + '&radius=' + radius, null, \"Ошибка при поиске событий в радиусе\", verbose);",
+          "    }",
+          "",
+          "    async getEventDistance(eventId, lat, lon, verbose=null) {",
+          "        return this.get('/events/' + eventId + '/locations/distance?lat=' + lat + '&lon=' + lon, null, \"Ошибка при получении расстояния до события\", verbose);",
           "    }",
           "",
           "    async post(path, body, errorText=\"Ошибка при выполнении post-запроса: \", verbose=null) {",

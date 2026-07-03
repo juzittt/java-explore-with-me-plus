@@ -2,8 +2,11 @@ package ewm.location.service;
 
 import ewm.events.dto.EventShortDto;
 import ewm.events.mapper.EventMapper;
+import ewm.events.repository.EventsRepository;
 import ewm.exception.NotFoundException;
 import ewm.exception.ValidationException;
+import ewm.location.dto.DistanceDto;
+import ewm.location.dto.EventDistanceDto;
 import ewm.location.dto.LocationDto;
 import ewm.location.dto.NewLocationDto;
 import ewm.location.dto.UpdateLocationDto;
@@ -21,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +36,7 @@ public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
     private final EventMapper eventMapper;
+    private final EventsRepository eventRepository;
 
     private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
@@ -114,6 +119,57 @@ public class LocationServiceImpl implements LocationService {
                 .toList();
     }
 
+    @Override
+    public List<EventDistanceDto> findEventsWithinRadius(Float lat, Float lon, Double radius) {
+        if (lat == null || lon == null) {
+            throw new ValidationException("Координаты lat и lon обязательны");
+        }
+        if (radius == null || radius <= 0) {
+            throw new ValidationException("Радиус должен быть положительным числом");
+        }
+        if (lat < -90.0 || lat > 90.0) {
+            throw new ValidationException("Широта должна быть от -90 до 90");
+        }
+        if (lon < -180.0 || lon > 180.0) {
+            throw new ValidationException("Долгота должна быть от -180 до 180");
+        }
+
+        List<Object[]> results = locationRepository.findEventsWithDistanceWithinRadius(lat, lon, radius);
+        return results.stream()
+                .map(this::mapToEventDistanceDto)
+                .toList();
+    }
+
+    @Override
+    public DistanceDto getDistanceToEvent(Long eventId, Float lat, Float lon) {
+        if (eventId == null) {
+            throw new ValidationException("ID события обязателен");
+        }
+        if (lat == null || lon == null) {
+            throw new ValidationException("Координаты lat и lon обязательны");
+        }
+        if (lat < -90.0 || lat > 90.0) {
+            throw new ValidationException("Широта должна быть от -90 до 90");
+        }
+        if (lon < -180.0 || lon > 180.0) {
+            throw new ValidationException("Долгота должна быть от -180 до 180");
+        }
+
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException("Событие с id=" + eventId + " не найдено");
+        }
+
+        Double distance = locationRepository.findDistanceToEvent(eventId, lat, lon);
+        if (distance == null) {
+            throw new NotFoundException("Не удалось вычислить расстояние до события с id=" + eventId);
+        }
+
+        return DistanceDto.builder()
+                .eventId(eventId)
+                .distance(distance)
+                .build();
+    }
+
     private Location getLocationOrThrow(Long id) {
         return locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Локация не найдена с id: " + id));
@@ -123,6 +179,17 @@ public class LocationServiceImpl implements LocationService {
         Point point = geometryFactory.createPoint(new Coordinate(lon, lat));
         point.setSRID(4326);
         return point;
+    }
+
+    private EventDistanceDto mapToEventDistanceDto(Object[] row) {
+        return EventDistanceDto.builder()
+                .eventId(((Number) row[0]).longValue())
+                .title((String) row[1])
+                .annotation((String) row[2])
+                .eventDate(((Timestamp) row[3]).toLocalDateTime())
+                .paid((Boolean) row[4])
+                .distance(((Number) row[5]).doubleValue())
+                .build();
     }
 
     private void validateLocationType(String locationType) {

@@ -1,11 +1,9 @@
 package ewm.location.service;
 
-import ewm.location.dto.UpdateLocationDto;
+import ewm.location.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ewm.events.dto.EventShortDto;
-import ewm.location.dto.LocationDto;
-import ewm.location.dto.NewLocationDto;
 
 import java.util.List;
 
@@ -24,4 +22,8 @@ public interface LocationService {
     List<LocationDto> findLocationsContainingPoint(Float lat, Float lon);
 
     List<EventShortDto> findEventsInLocation(Long locationId);
+
+    List<EventDistanceDto> findEventsWithinRadius(Float lat, Float lon, Double radius);
+
+    DistanceDto getDistanceToEvent(Long eventId, Float lat, Float lon);
 }

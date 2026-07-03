@@ -28,4 +28,42 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
           )
         """, nativeQuery = true)
     List<Event> findEventsInLocation(@Param("locationId") Long locationId);
+
+    @Query(value = """
+        SELECT e.id, e.title, e.annotation, e.event_date, e.paid,
+               ST_Distance(
+                   ST_SetSRID(ST_MakePoint(e.lon, e.lat), 4326)::geography,
+                   ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography
+               ) as distance
+        FROM events e
+        WHERE e.state = 'PUBLISHED'
+          AND ST_DWithin(
+              ST_SetSRID(ST_MakePoint(e.lon, e.lat), 4326)::geography,
+              ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography,
+              :radius
+          )
+        ORDER BY distance
+        """, nativeQuery = true)
+    List<Object[]> findEventsWithDistanceWithinRadius(
+            @Param("lat") double lat,
+            @Param("lon") double lon,
+            @Param("radius") double radius
+    );
+
+    @Query(value = """
+        SELECT ST_Distance(
+            ST_SetSRID(ST_MakePoint(e.lon, e.lat), 4326)::geography,
+            ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography
+        )
+        FROM events e
+        WHERE e.id = :eventId
+        """, nativeQuery = true)
+    Double findDistanceToEvent(
+            @Param("eventId") Long eventId,
+            @Param("lat") double lat,
+            @Param("lon") double lon
+    );
+
+    @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM Event e WHERE e.id = :eventId")
+    boolean existsEventById(@Param("eventId") Long eventId);
 }
