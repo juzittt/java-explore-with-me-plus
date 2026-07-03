@@ -22,11 +22,6 @@ public interface LocationMapper {
 
     LocationDto toDto(Location location);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "center", source = ".", qualifiedByName = "toPointFromUpdate")
-    @Mapping(target = "createdAt", ignore = true)
-    void updateEntity(UpdateLocationDto dto, @MappingTarget Location location);
-
     @Named("toPoint")
     default Point toPoint(NewLocationDto dto) {
         if (dto == null || dto.getLon() == null || dto.getLat() == null) {

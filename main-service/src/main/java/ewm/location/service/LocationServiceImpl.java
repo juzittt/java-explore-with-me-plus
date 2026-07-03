@@ -1,5 +1,7 @@
 package ewm.location.service;
 
+import ewm.exception.ValidationException;
+import ewm.location.model.LocationType;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -19,6 +21,7 @@ import ewm.location.mapper.LocationMapper;
 import ewm.location.model.Location;
 import ewm.location.repository.LocationRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,6 +38,19 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public LocationDto create(NewLocationDto dto) {
+        if (dto.getLocationType() == null) {
+            throw new ValidationException("Тип локации обязателен");
+        }
+
+        try {
+            LocationType.valueOf(dto.getLocationType().name());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException(
+                    "Недопустимое значение locationType: '" + dto.getLocationType() +
+                            "'. Допустимые значения: " + Arrays.toString(LocationType.values())
+            );
+        }
+
         Location location = locationMapper.toEntity(dto);
         Location saved = locationRepository.save(location);
         return locationMapper.toDto(saved);
@@ -54,8 +70,9 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public LocationDto update(Long id, UpdateLocationDto dto) {
+        validateUpdate(dto);
+
         Location existing = getLocationOrThrow(id);
-        locationMapper.updateEntity(dto, existing);
 
         if (dto.getName() != null) {
             existing.setName(dto.getName());
@@ -117,5 +134,36 @@ public class LocationServiceImpl implements LocationService {
         Point point = geometryFactory.createPoint(new Coordinate(lon, lat));
         point.setSRID(4326);
         return point;
+    }
+
+    public void validateUpdate(UpdateLocationDto dto) {
+        if (dto.getName() != null) {
+            if (dto.getName().isBlank()) {
+                throw new ValidationException("Название локации не может быть пустым");
+            }
+            if (dto.getName().length() > 255) {
+                throw new ValidationException("Название локации не должно превышать 255 символов");
+            }
+        }
+
+        if (dto.getDescription() != null && dto.getDescription().length() > 1000) {
+            throw new ValidationException("Описание локации не должно превышать 1000 символов");
+        }
+
+        if (dto.getLat() != null || dto.getLon() != null) {
+            if (dto.getLat() == null || dto.getLon() == null) {
+                throw new ValidationException("Координаты lat и lon должны быть указаны вместе");
+            }
+            if (dto.getLat() < -90.0 || dto.getLat() > 90.0) {
+                throw new ValidationException("Широта должна быть от -90 до 90");
+            }
+            if (dto.getLon() < -180.0 || dto.getLon() > 180.0) {
+                throw new ValidationException("Долгота должна быть от -180 до 180");
+            }
+        }
+
+        if (dto.getRadiusMeters() != null && dto.getRadiusMeters() <= 0) {
+            throw new ValidationException("Радиус должен быть положительным числом");
+        }
     }
 }

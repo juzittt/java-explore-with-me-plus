@@ -32,7 +32,7 @@ public class AdminLocationController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<LocationDto>> getAll(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<Page<LocationDto>> getAll(@PageableDefault Pageable pageable) {
         Page<LocationDto> locations = locationService.getAll(pageable);
         return ResponseEntity.ok(locations);
     }
@@ -46,7 +46,7 @@ public class AdminLocationController {
     @PatchMapping("/{locationId}")
     public ResponseEntity<LocationDto> update(
             @PathVariable Long locationId,
-            @Valid @RequestBody UpdateLocationDto dto) {
+            @RequestBody UpdateLocationDto dto) {
         LocationDto updated = locationService.update(locationId, dto);
         return ResponseEntity.ok(updated);
     }
