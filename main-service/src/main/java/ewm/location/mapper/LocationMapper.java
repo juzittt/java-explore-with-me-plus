@@ -25,6 +25,26 @@ public interface LocationMapper {
     @Mapping(target = "locationType", source = "locationType", qualifiedByName = "locationTypeToString")
     LocationDto toDto(Location location);
 
+    @Named("toPoint")
+    default Point toPoint(NewLocationDto dto) {
+        if (dto == null || dto.getLon() == null || dto.getLat() == null) {
+            return null;
+        }
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(dto.getLon(), dto.getLat()));
+        point.setSRID(4326);
+        return point;
+    }
+
+    @Named("toPointFromUpdate")
+    default Point toPointFromUpdate(UpdateLocationDto dto) {
+        if (dto == null || dto.getLon() == null || dto.getLat() == null) {
+            return null;
+        }
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(dto.getLon(), dto.getLat()));
+        point.setSRID(4326);
+        return point;
+    }
+
     @Named("stringToLocationType")
     default LocationType stringToLocationType(String value) {
         if (value == null || value.isBlank()) return null;
