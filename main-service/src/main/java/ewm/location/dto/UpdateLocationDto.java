@@ -1,6 +1,5 @@
 package ewm.location.dto;
 
-import ewm.location.model.LocationType;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Positive;
@@ -19,7 +18,7 @@ public class UpdateLocationDto {
     @Size(max = 1000, message = "Описание не должно превышать 1000 символов")
     private String description;
 
-    private LocationType locationType;
+    private String locationType;
 
     @DecimalMin(value = "-90.0", message = "Широта должна быть от -90 до 90")
     @DecimalMax(value = "90.0", message = "Широта должна быть от -90 до 90")

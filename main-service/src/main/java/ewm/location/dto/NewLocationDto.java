@@ -1,6 +1,5 @@
 package ewm.location.dto;
 
-import ewm.location.model.LocationType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -18,7 +17,7 @@ public class NewLocationDto {
     private String description;
 
     @NotNull(message = "Тип локации обязателен")
-    private LocationType locationType;
+    private String locationType;
 
     @NotNull(message = "Широта обязательна")
     @DecimalMin(value = "-90.0", message = "Широта должна быть от -90 до 90")

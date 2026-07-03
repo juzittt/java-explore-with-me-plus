@@ -1,6 +1,5 @@
 package ewm.location.dto;
 
-import ewm.location.model.LocationType;
 import lombok.*;
 
 @Data
@@ -13,6 +12,6 @@ public class LocationDto {
     private Float lon;
     private String name;
     private String description;
-    private LocationType locationType;
+    private String locationType;
     private Double radiusMeters;
 }

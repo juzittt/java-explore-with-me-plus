@@ -1,7 +1,16 @@
 package ewm.location.service;
 
+import ewm.events.dto.EventShortDto;
+import ewm.events.mapper.EventMapper;
+import ewm.exception.NotFoundException;
 import ewm.exception.ValidationException;
+import ewm.location.dto.LocationDto;
+import ewm.location.dto.NewLocationDto;
+import ewm.location.dto.UpdateLocationDto;
+import ewm.location.mapper.LocationMapper;
+import ewm.location.model.Location;
 import ewm.location.model.LocationType;
+import ewm.location.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -11,15 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ewm.events.dto.EventShortDto;
-import ewm.events.mapper.EventMapper;
-import ewm.exception.NotFoundException;
-import ewm.location.dto.LocationDto;
-import ewm.location.dto.NewLocationDto;
-import ewm.location.dto.UpdateLocationDto;
-import ewm.location.mapper.LocationMapper;
-import ewm.location.model.Location;
-import ewm.location.repository.LocationRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,18 +38,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public LocationDto create(NewLocationDto dto) {
-        if (dto.getLocationType() == null) {
-            throw new ValidationException("Тип локации обязателен");
-        }
-
-        try {
-            LocationType.valueOf(dto.getLocationType().name());
-        } catch (IllegalArgumentException e) {
-            throw new ValidationException(
-                    "Недопустимое значение locationType: '" + dto.getLocationType() +
-                            "'. Допустимые значения: " + Arrays.toString(LocationType.values())
-            );
-        }
+        validateLocationType(dto.getLocationType());
 
         Location location = locationMapper.toEntity(dto);
         Location saved = locationRepository.save(location);
@@ -81,7 +70,7 @@ public class LocationServiceImpl implements LocationService {
             existing.setDescription(dto.getDescription());
         }
         if (dto.getLocationType() != null) {
-            existing.setLocationType(dto.getLocationType());
+            existing.setLocationType(LocationType.valueOf(dto.getLocationType().toUpperCase()));
         }
         if (dto.getLat() != null && dto.getLon() != null) {
             existing.setLat(dto.getLat());
@@ -136,6 +125,20 @@ public class LocationServiceImpl implements LocationService {
         return point;
     }
 
+    private void validateLocationType(String locationType) {
+        if (locationType == null || locationType.isBlank()) {
+            throw new ValidationException("Тип локации обязателен");
+        }
+        try {
+            LocationType.valueOf(locationType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException(
+                    "Недопустимое значение locationType: '" + locationType +
+                            "'. Допустимые значения: " + Arrays.toString(LocationType.values())
+            );
+        }
+    }
+
     public void validateUpdate(UpdateLocationDto dto) {
         if (dto.getName() != null) {
             if (dto.getName().isBlank()) {
@@ -148,6 +151,10 @@ public class LocationServiceImpl implements LocationService {
 
         if (dto.getDescription() != null && dto.getDescription().length() > 1000) {
             throw new ValidationException("Описание локации не должно превышать 1000 символов");
+        }
+
+        if (dto.getLocationType() != null) {
+            validateLocationType(dto.getLocationType());
         }
 
         if (dto.getLat() != null || dto.getLon() != null) {
