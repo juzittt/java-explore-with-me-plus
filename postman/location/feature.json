@@ -1,9 +1,10 @@
 {
   "info": {
-    "_postman_id": "4f622f31-328a-4506-95bd-66359cfbe749",
+    "_postman_id": "fdc8bffc-63fd-418a-a3f3-6828f346dae4",
     "name": "Test Explore With Me - Main service + Locations",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "23073145"
+    "_exporter_id": "52725787",
+    "_collection_link": "https://go.postman.co/collection/52725787-fdc8bffc-63fd-418a-a3f3-6828f346dae4?source=collection_link"
   },
   "item": [
     {
@@ -79,20 +80,36 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Accept", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{{request_body}}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/admin/locations",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "locations"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Получение списка локаций",
@@ -142,17 +159,34 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/admin/locations?from=0&size=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "locations"
+              ],
               "query": [
-                { "key": "from", "value": "0" },
-                { "key": "size", "value": "10" }
+                {
+                  "key": "from",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Получение локации по id",
@@ -206,14 +240,31 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/admin/locations/:locId",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", ":locId"],
-              "variable": [{ "key": "locId", "value": "{{locId}}" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "locations",
+                ":locId"
+              ],
+              "variable": [
+                {
+                  "key": "locId",
+                  "value": "{{locId}}"
+                }
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Поиск локаций по координатам",
@@ -272,17 +323,35 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/admin/locations/search?lat=55.754&lon=37.621",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", "search"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "locations",
+                "search"
+              ],
               "query": [
-                { "key": "lat", "value": "55.754" },
-                { "key": "lon", "value": "37.621" }
+                {
+                  "key": "lat",
+                  "value": "55.754"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.621"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Обновление локации",
@@ -352,21 +421,43 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Accept", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{{request_body}}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/admin/locations/:locId",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", ":locId"],
-              "variable": [{ "key": "locId", "value": "{{locId}}" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "locations",
+                ":locId"
+              ],
+              "variable": [
+                {
+                  "key": "locId",
+                  "value": "{{locId}}"
+                }
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Удаление локации",
@@ -419,14 +510,31 @@
           ],
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/admin/locations/:locId",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", ":locId"],
-              "variable": [{ "key": "locId", "value": "{{locId}}" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "locations",
+                ":locId"
+              ],
+              "variable": [
+                {
+                  "key": "locId",
+                  "value": "{{locId}}"
+                }
+              ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -478,12 +586,36 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Accept", "value": "application/json" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
                 ],
-                "body": { "mode": "raw", "raw": "{{request_body}}", "options": { "raw": { "language": "json" } } },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             },
             {
               "name": "Добавление локации без поля locationType",
@@ -515,10 +647,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             },
             {
               "name": "Добавление локации без координат lat",
@@ -549,10 +699,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             },
             {
               "name": "Добавление локации без радиуса",
@@ -583,10 +751,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -622,10 +808,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             },
             {
               "name": "Добавление локации с долготой > 180",
@@ -656,10 +860,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             },
             {
               "name": "Добавление локации с отрицательным радиусом",
@@ -690,10 +912,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -729,10 +969,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             },
             {
               "name": "Добавление локации с description.length > 1000",
@@ -763,10 +1021,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             },
             {
               "name": "Добавление локации с name.length == 255",
@@ -797,10 +1073,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -836,10 +1130,28 @@
               ],
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{{request_body}}" },
-                "url": { "raw": "{{baseUrl}}/admin/locations", "host": ["{{baseUrl}}"], "path": ["admin", "locations"] }
-              }
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{request_body}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/locations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -864,13 +1176,25 @@
               ],
               "request": {
                 "method": "GET",
-                "header": [{ "key": "Accept", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
                 "url": {
                   "raw": "{{baseUrl}}/admin/locations/999999",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["admin", "locations", "999999"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations",
+                    "999999"
+                  ]
                 }
-              }
+              },
+              "response": []
             },
             {
               "name": "Обновление несуществующей локации",
@@ -889,14 +1213,29 @@
               ],
               "request": {
                 "method": "PATCH",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": { "mode": "raw", "raw": "{\"name\": \"new name\"}" },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"name\": \"new name\"}"
+                },
                 "url": {
                   "raw": "{{baseUrl}}/admin/locations/999999",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["admin", "locations", "999999"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations",
+                    "999999"
+                  ]
                 }
-              }
+              },
+              "response": []
             },
             {
               "name": "Удаление несуществующей локации",
@@ -915,13 +1254,25 @@
               ],
               "request": {
                 "method": "DELETE",
-                "header": [{ "key": "Accept", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
                 "url": {
                   "raw": "{{baseUrl}}/admin/locations/999999",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["admin", "locations", "999999"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations",
+                    "999999"
+                  ]
                 }
-              }
+              },
+              "response": []
             }
           ]
         },
@@ -982,13 +1333,24 @@
               ],
               "request": {
                 "method": "GET",
-                "header": [{ "key": "Accept", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
                 "url": {
                   "raw": "{{baseUrl}}/admin/locations",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["admin", "locations"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "locations"
+                  ]
                 }
-              }
+              },
+              "response": []
             }
           ]
         }
@@ -996,7 +1358,6 @@
     },
     {
       "name": "Public Location Endpoints",
-      "description": "Тесты для публичных эндпоинтов поиска событий по координатам",
       "item": [
         {
           "name": "Поиск событий в радиусе от точки",
@@ -1086,18 +1447,39 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=37.621&radius=5000",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "locations", "near"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "locations",
+                "near"
+              ],
               "query": [
-                { "key": "lat", "value": "55.754" },
-                { "key": "lon", "value": "37.621" },
-                { "key": "radius", "value": "5000" }
+                {
+                  "key": "lat",
+                  "value": "55.754"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.621"
+                },
+                {
+                  "key": "radius",
+                  "value": "5000"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Поиск событий в радиусе - событие вне зоны",
@@ -1161,19 +1543,42 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/locations/near?lat=48.8566&lon=2.3522&radius=1000",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "locations", "near"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "locations",
+                "near"
+              ],
               "query": [
-                { "key": "lat", "value": "48.8566", "description": "Париж - далеко от Москвы" },
-                { "key": "lon", "value": "2.3522" },
-                { "key": "radius", "value": "1000", "description": "Радиус 1 км" }
+                {
+                  "key": "lat",
+                  "value": "48.8566",
+                  "description": "Париж - далеко от Москвы"
+                },
+                {
+                  "key": "lon",
+                  "value": "2.3522"
+                },
+                {
+                  "key": "radius",
+                  "value": "1000",
+                  "description": "Радиус 1 км"
+                }
               ]
             },
             "description": "Событие в Москве, поиск в Париже - должно быть пусто"
-          }
+          },
+          "response": []
         },
         {
           "name": "Получение расстояния до события",
@@ -1254,20 +1659,44 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/:eventId/locations/distance?lat=55.755&lon=37.622",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", ":eventId", "locations", "distance"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                ":eventId",
+                "locations",
+                "distance"
+              ],
               "query": [
-                { "key": "lat", "value": "55.755", "description": "Точка в ~200м от Красной площади" },
-                { "key": "lon", "value": "37.622" }
+                {
+                  "key": "lat",
+                  "value": "55.755",
+                  "description": "Точка в ~200м от Красной площади"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.622"
+                }
               ],
               "variable": [
-                { "key": "eventId", "value": "{{eid}}", "description": "(Required) id события" }
+                {
+                  "key": "eventId",
+                  "value": "{{eid}}",
+                  "description": "(Required) id события"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Получение расстояния до несуществующего события",
@@ -1288,17 +1717,36 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/999999/locations/distance?lat=55.755&lon=37.622",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "999999", "locations", "distance"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "999999",
+                "locations",
+                "distance"
+              ],
               "query": [
-                { "key": "lat", "value": "55.755" },
-                { "key": "lon", "value": "37.622" }
+                {
+                  "key": "lat",
+                  "value": "55.755"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.622"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Поиск событий с невалидной широтой",
@@ -1319,18 +1767,40 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/locations/near?lat=95.0&lon=37.621&radius=5000",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "locations", "near"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "locations",
+                "near"
+              ],
               "query": [
-                { "key": "lat", "value": "95.0", "description": "Широта > 90 - невалидно" },
-                { "key": "lon", "value": "37.621" },
-                { "key": "radius", "value": "5000" }
+                {
+                  "key": "lat",
+                  "value": "95.0",
+                  "description": "Широта > 90 - невалидно"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.621"
+                },
+                {
+                  "key": "radius",
+                  "value": "5000"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Поиск событий с невалидной долготой",
@@ -1351,18 +1821,40 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=200.0&radius=5000",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "locations", "near"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "locations",
+                "near"
+              ],
               "query": [
-                { "key": "lat", "value": "55.754" },
-                { "key": "lon", "value": "200.0", "description": "Долгота > 180 - невалидно" },
-                { "key": "radius", "value": "5000" }
+                {
+                  "key": "lat",
+                  "value": "55.754"
+                },
+                {
+                  "key": "lon",
+                  "value": "200.0",
+                  "description": "Долгота > 180 - невалидно"
+                },
+                {
+                  "key": "radius",
+                  "value": "5000"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Поиск событий с отрицательным радиусом",
@@ -1383,18 +1875,40 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=37.621&radius=-100",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "locations", "near"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "locations",
+                "near"
+              ],
               "query": [
-                { "key": "lat", "value": "55.754" },
-                { "key": "lon", "value": "37.621" },
-                { "key": "radius", "value": "-100", "description": "Отрицательный радиус - невалидно" }
+                {
+                  "key": "lat",
+                  "value": "55.754"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.621"
+                },
+                {
+                  "key": "radius",
+                  "value": "-100",
+                  "description": "Отрицательный радиус - невалидно"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Получение расстояния с невалидной широтой",
@@ -1415,17 +1929,37 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/1/locations/distance?lat=-100.0&lon=37.622",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "1", "locations", "distance"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "1",
+                "locations",
+                "distance"
+              ],
               "query": [
-                { "key": "lat", "value": "-100.0", "description": "Широта < -90 - невалидно" },
-                { "key": "lon", "value": "37.622" }
+                {
+                  "key": "lat",
+                  "value": "-100.0",
+                  "description": "Широта < -90 - невалидно"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.622"
+                }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Сортировка событий по расстоянию",
@@ -1506,107 +2040,43 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Accept", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/events/locations/near?lat=55.754&lon=37.621&radius=10000",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "locations", "near"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "events",
+                "locations",
+                "near"
+              ],
               "query": [
-                { "key": "lat", "value": "55.754" },
-                { "key": "lon", "value": "37.621" },
-                { "key": "radius", "value": "10000", "description": "Радиус 10 км, чтобы найти все 3 события" }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Validation",
-      "item": [
-        {
-          "name": "Event",
-          "item": [
-            {
-              "name": "Required query params",
-              "item": [
                 {
-                  "name": "Добавление запроса от текущего пользователя на участие в событии без обязательного query params",
-                  "event": [
-                    {
-                      "listen": "prerequest",
-                      "script": {
-                        "exec": [
-                          "const main = async () => {",
-                          "    const api = new API(pm);",
-                          "    const rnd = new RandomUtils();",
-                          "",
-                          "    try {",
-                          "        const submittedUser = await api.addUser(rnd.getUser());",
-                          "        pm.request.removeQueryParams(['eventId']);",
-                          "        pm.collectionVariables.set('uid', submittedUser.id);",
-                          "    } catch(err) {",
-                          "        console.error(\"Ошибка при подготовке тестовых данных. \", err);",
-                          "    }",
-                          "};",
-                          "",
-                          "const interval = setInterval(() => {}, 1000);",
-                          "",
-                          "setTimeout(async () => ",
-                          "    {",
-                          "        try {",
-                          "            await main();",
-                          "        } catch (e) {",
-                          "            console.error(e);",
-                          "        } finally {",
-                          "            clearInterval(interval);",
-                          "        }",
-                          "    }, ",
-                          "    100 ",
-                          ");"
-                        ],
-                        "type": "text/javascript"
-                      }
-                    },
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {",
-                          "    pm.response.to.be.badRequest;    ",
-                          "    pm.response.to.be.withBody;",
-                          "    pm.response.to.be.json;",
-                          "});"
-                        ],
-                        "type": "text/javascript"
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [
-                      { "key": "Accept", "value": "application/json" }
-                    ],
-                    "url": {
-                      "raw": "{{baseUrl}}/users/:userId/requests",
-                      "host": ["{{baseUrl}}"],
-                      "path": ["users", ":userId", "requests"],
-                      "query": [
-                        { "key": "eventId", "value": "0", "description": "(Required) id события", "disabled": true }
-                      ],
-                      "variable": [
-                        { "key": "userId", "value": "{{uid}}", "description": "(Required) id текущего пользователя" }
-                      ]
-                    },
-                    "description": "Обратите внимание:\n- нельзя добавить повторный запрос\n- инициатор события не может добавить запрос на участие в своём событии\n- нельзя участвовать в неопубликованном событии\n- если у события достигнут лимит запросов на участие - необходимо вернуть ошибку\n- если для события отключена пре-модерация запросов на участие, то запрос должен автоматически перейти в состояние подтвержденного"
-                  },
-                  "response": []
+                  "key": "lat",
+                  "value": "55.754"
+                },
+                {
+                  "key": "lon",
+                  "value": "37.621"
+                },
+                {
+                  "key": "radius",
+                  "value": "10000",
+                  "description": "Радиус 10 км, чтобы найти все 3 события"
                 }
               ]
             }
-          ]
+          },
+          "response": []
         }
-      ]
+      ],
+      "description": "Тесты для публичных эндпоинтов поиска событий по координатам"
     }
   ],
   "event": [
@@ -1837,33 +2307,111 @@
       "listen": "test",
       "script": {
         "type": "text/javascript",
-        "exec": [""]
+        "exec": [
+          ""
+        ]
       }
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
-    { "key": "name", "value": "" },
-    { "key": "usersCount", "value": 1, "type": "number" },
-    { "key": "catid", "value": 1, "type": "number" },
-    { "key": "request_body", "value": "" },
-    { "key": "mail", "value": "" },
-    { "key": "response", "value": "" },
-    { "key": "uid", "value": 1, "type": "number" },
-    { "key": "catname", "value": "" },
-    { "key": "eid", "value": 1, "type": "number" },
-    { "key": "compid", "value": 1, "type": "number" },
-    { "key": "toCheck", "value": "" },
-    { "key": "newDataToSet", "value": "" },
-    { "key": "uid1", "value": "" },
-    { "key": "reqid", "value": 1, "type": "number" },
-    { "key": "catId", "value": "" },
-    { "key": "confirmedRequests", "value": "" },
-    { "key": "responseArr", "value": "" },
-    { "key": "source1", "value": "" },
-    { "key": "source2", "value": "" },
-    { "key": "fromId", "value": "0" },
-    { "key": "source", "value": "" },
-    { "key": "locId", "value": "" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "name",
+      "value": ""
+    },
+    {
+      "key": "usersCount",
+      "value": 1,
+      "type": "number"
+    },
+    {
+      "key": "catid",
+      "value": 1,
+      "type": "number"
+    },
+    {
+      "key": "request_body",
+      "value": ""
+    },
+    {
+      "key": "mail",
+      "value": ""
+    },
+    {
+      "key": "response",
+      "value": ""
+    },
+    {
+      "key": "uid",
+      "value": 1,
+      "type": "number"
+    },
+    {
+      "key": "catname",
+      "value": ""
+    },
+    {
+      "key": "eid",
+      "value": 1,
+      "type": "number"
+    },
+    {
+      "key": "compid",
+      "value": 1,
+      "type": "number"
+    },
+    {
+      "key": "toCheck",
+      "value": ""
+    },
+    {
+      "key": "newDataToSet",
+      "value": ""
+    },
+    {
+      "key": "uid1",
+      "value": ""
+    },
+    {
+      "key": "reqid",
+      "value": 1,
+      "type": "number"
+    },
+    {
+      "key": "catId",
+      "value": ""
+    },
+    {
+      "key": "confirmedRequests",
+      "value": ""
+    },
+    {
+      "key": "responseArr",
+      "value": ""
+    },
+    {
+      "key": "source1",
+      "value": ""
+    },
+    {
+      "key": "source2",
+      "value": ""
+    },
+    {
+      "key": "fromId",
+      "value": "0"
+    },
+    {
+      "key": "source",
+      "value": ""
+    },
+    {
+      "key": "locId",
+      "value": ""
+    }
   ]
 }
