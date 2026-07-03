@@ -6,7 +6,8 @@ services:
     image: stats-server
     container_name: stats-server
     depends_on:
-      - stats-db
+      stats-db:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
       - SPRING_DATASOURCE_USERNAME=dbuser
@@ -26,10 +27,11 @@ services:
     volumes:
       - ./stats/stats-server/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U dbuser -d stats"]
       interval: 5s
+      timeout: 5s
       retries: 10
+      start_period: 10s
     networks:
       - app-network
 
@@ -40,8 +42,10 @@ services:
     image: main-service
     container_name: main-service
     depends_on:
-      - ewm-db
-      - stats-server
+      ewm-db:
+        condition: service_healthy
+      stats-server:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - SPRING_DATASOURCE_USERNAME=dbuser
@@ -62,10 +66,11 @@ services:
     volumes:
       - ./main-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U dbuser -d ewm"]
       interval: 5s
+      timeout: 5s
       retries: 10
+      start_period: 10s
     networks:
       - app-network
 
