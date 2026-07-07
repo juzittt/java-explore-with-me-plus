@@ -5,6 +5,9 @@ import ewm.events.dto.EventShortDto;
 import ewm.events.dto.EventSort;
 import ewm.events.dto.params.PublicEventParams;
 import ewm.events.service.EventsService;
+import ewm.location.dto.DistanceDto;
+import ewm.location.dto.EventDistanceDto;
+import ewm.location.service.LocationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -13,10 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,11 +25,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
+@RequestMapping("/events")
 public class PublicEventsController {
 
     private final EventsService eventsService;
+    private final LocationService locationService;
 
-    @GetMapping("/events")
+    @GetMapping
     public ResponseEntity<List<EventShortDto>> getEvents(
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
@@ -59,10 +61,30 @@ public class PublicEventsController {
         return ResponseEntity.ok(eventsService.getEvents(searchParams, request));
     }
 
-    @GetMapping("/events/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, HttpServletRequest request) {
         log.info("GET /events/{}", id);
 
         return ResponseEntity.ok(eventsService.getEvent(id, request));
+    }
+
+    @GetMapping("/locations/near")
+    public ResponseEntity<List<EventDistanceDto>> findEventsWithinRadius(
+            @RequestParam Float lat,
+            @RequestParam Float lon,
+            @RequestParam Double radius) {
+        log.info("GET /events/locations/near: lat={}, lon={}, radius={}", lat, lon, radius);
+        List<EventDistanceDto> events = locationService.findEventsWithinRadius(lat, lon, radius);
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/{eventId}/locations/distance")
+    public ResponseEntity<DistanceDto> getDistanceToEvent(
+            @PathVariable Long eventId,
+            @RequestParam Float lat,
+            @RequestParam Float lon) {
+        log.info("GET /events/{}/locations/distance: lat={}, lon={}", eventId, lat, lon);
+        DistanceDto distance = locationService.getDistanceToEvent(eventId, lat, lon);
+        return ResponseEntity.ok(distance);
     }
 }
