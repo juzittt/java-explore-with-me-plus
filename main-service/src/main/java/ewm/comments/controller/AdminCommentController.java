@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,18 +22,19 @@ public class AdminCommentController {
     private final CommentService commentService;
 
     @DeleteMapping("/{commentId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCommentByAdmin(@PathVariable @Positive Long commentId) {
+    public ResponseEntity<Void> deleteCommentByAdmin(@PathVariable @Positive Long commentId) {
         log.info("DELETE /admin/comments/{} - Удаление комментария администратором", commentId);
         commentService.deleteCommentByAdmin(commentId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/{commentId}")
-    public CommentDto updateCommentByAdmin(
+    public ResponseEntity<CommentDto> updateCommentByAdmin(
             @PathVariable @Positive Long commentId,
             @Valid @RequestBody UpdateCommentDto updateCommentDto
     ) {
         log.info("PATCH /admin/comments/{} - Обновление комментария администратором", commentId);
-        return commentService.updateCommentByAdmin(commentId, updateCommentDto);
+        CommentDto updatedComment = commentService.updateCommentByAdmin(commentId, updateCommentDto);
+        return ResponseEntity.ok(updatedComment);
     }
 }
