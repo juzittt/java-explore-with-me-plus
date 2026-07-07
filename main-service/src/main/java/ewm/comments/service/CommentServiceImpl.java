@@ -152,4 +152,11 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Комментарий с id=" + commentId + " не найден"));
     }
+
+    @Override
+    public CommentDto getCommentByIdForAdmin(Long commentId) {
+        log.info("Получение комментария по id={} администратором", commentId);
+        Comment comment = getCommentOrThrow(commentId);
+        return commentMapper.toCommentDto(comment);
+    }
 }

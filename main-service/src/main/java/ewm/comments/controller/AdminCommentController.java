@@ -37,4 +37,11 @@ public class AdminCommentController {
         CommentDto updatedComment = commentService.updateCommentByAdmin(commentId, updateCommentDto);
         return ResponseEntity.ok(updatedComment);
     }
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<CommentDto> getCommentById(@PathVariable @Positive Long commentId) {
+        log.info("GET /admin/comments/{} - Получение комментария администратором", commentId);
+        CommentDto comment = commentService.getCommentByIdForAdmin(commentId);
+        return ResponseEntity.ok(comment);
+    }
 }

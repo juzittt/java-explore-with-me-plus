@@ -3,7 +3,6 @@ package ewm.comments.service;
 import ewm.comments.dto.CommentDto;
 import ewm.comments.dto.NewCommentDto;
 import ewm.comments.dto.UpdateCommentDto;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,4 +21,6 @@ public interface CommentService {
     CommentDto getCommentById(Long userId, Long commentId);
 
     CommentDto updateCommentByAdmin(Long commentId, UpdateCommentDto updateCommentDto);
+
+    CommentDto getCommentByIdForAdmin(Long commentId);
 }
